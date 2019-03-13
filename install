@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+set -e
+
+CONFIG="arch.conf.yaml"
+DOTBOT_DIR="dotbot"
+
+DOTBOT_BIN="bin/dotbot"
+BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+echo "Standing up dotbot..."
+cd ${BASEDIR} && git submodule update --init --recursive dotbot/
+
+echo "Standing up dotbot-pacaur..."
+cd ${BASEDIR} && git submodule update --init --recursive dotbot-pacaur/
+
+echo "Handing off to dotbot"
+
+#"${BASEDIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" -d "${BASEDIR}" --plugin-dir dotbot-pacaur -c "${CONFIG}" "${@}"
+"${BASEDIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" -d "${BASEDIR}" -c "${CONFIG}" --plugin-dir "${BASEDIR}/dotbot-pacaur" "${@}"

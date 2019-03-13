@@ -1,0 +1,3 @@
+
+
+alias docker_clean_images='sudo docker rmi $(sudo docker images -a --filter=dangling=true -q)'

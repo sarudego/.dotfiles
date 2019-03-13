@@ -1,0 +1,81 @@
+!Negro
+URxvt.color0: #000000
+URxvt.color8: #555753
+!Rojo
+URxvt.color1: #990099
+URxvt.color9: #8E388E
+!Verde
+URxvt.color2: #4E9A06
+URxvt.color10: #699000
+!Amarillo
+URxvt.color3: #FFA500
+URxvt.color11: #FFA500
+!Azul
+URxvt.color4: #3465A4
+URxvt.color12: #729FCF
+!Magenta
+URxvt.color5: #75507B
+URxvt.color13: #AD7FA8
+!Cyan
+URxvt.color6: #06989A
+URxvt.color14: #34E2E2
+!Blanco
+URxvt.color7: #FFFFFF
+URxvt.color15: #FFFFFF
+
+
+
+!Apariencia de la ventana
+! Especificamos el titulo de la ventana, por default, urxvt
+URxvt.title:Consola
+! Eliminamos las barras de scroll (en lo personal no me gustan)
+URxvt.scrollBar:false
+! Agregamos transparencia
+URxvt.depth: 32
+URxvt.background:[80]#000000
+! Definimos el color principal (letras)
+URxvt.foreground:#FFFFFF
+! Definimos el color del cursor
+URxvt.cursorColor:#FFFFFF
+! Añadimos parpadeo al cursor
+URxvt.cursorBlink:true
+! Definimos el tipo de fuente a usar (para obtener una lista completa de fuentes disponibles en su sistema use “fc-list” en su consola).
+! URxvt.font: xft:inconsolata:size=14
+URxvt*font: xft:Terminus:size=14,xft:Inconsolata\ for\ Powerline:size=14
+! URxvt.font: xft:Terminus:pixelsize=14
+! Si se presenta separación entre caracteres agregue, donde -1 es la cantidad de pixeles a disminuir
+URxvt.letterSpace:-1
+! Agregamos soporte para pestañas
+URxvt.perl-ext-common: default
+!URxvt.perl-ext: tabbed
+! Definimos el color de fondo de las pestañas
+URxvt.tabbed.tab-bg:#000000
+! Definimos el color frontal de las pestañas
+URxvt.tabbed.tab-fg:#75507B
+! Definimos el color de fondo de los separadores de pestañas
+URxvt.tabbed.tabbar-bg:#000000
+! Definimos el color frontal de los separadores de las pestañas
+URxvt.tabbed.tabbar-fg:#4E9A06
+
+
+! Habilitamos movimiento entre palabras
+! URxvt*altSendsEscape: true
+URxvt.keysym.Control-Up:     \033[1;5A
+URxvt.keysym.Control-Down:   \033[1;5B
+URxvt.keysym.Control-Left:   \033[1;5D
+URxvt.keysym.Control-Right:  \033[1;5C
+
+
+
+!! Copy-Paste
+!URxvt.clipboard.autocopy: true
+!URxvt.keysym.M-Escape: perl:keyboard-select:activate
+!URxvt.keysym.C-C: perl:clipboard:copy
+!URxvt.keysym.C-V: perl:clipboard:paste
+!URxvt.keysym.M-C-v: perl:clipboard:paste_escaped
+!URxvt.copyCommand: xsel -ib
+!URxvt.pasteCommand: xsel -ob
+
+
+
+

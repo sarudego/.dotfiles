@@ -1,0 +1,9 @@
+[submodule "dotbot"]
+	path = dotbot
+	url = https://github.com/anishathalye/dotbot
+[submodule "dotbot-pacaur"]
+	path = dotbot-pacaur
+	url = https://github.com/ajlende/dotbot-pacaur
+[submodule "tpm"]
+	path = tpm
+	url = https://github.com/tmux-plugins/tpm

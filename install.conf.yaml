@@ -1,0 +1,32 @@
+
+- defaults:
+    link:
+        relink: true
+
+- clean: ['~']
+
+- shell:
+  - [sleep 0, Installing Sarudego"'"s dotfiles..]
+
+- link:
+    # ~/.dotfiles: ''
+    ~/.tmux.conf:
+        relink: true
+        path: tmux.conf
+    ~/.oh-my-zsh: oh-my-zsh
+    ~/.vim: vim
+    ~/.config/nvim/init.vim: init.vim
+    ~/.vimrc:
+        relink: true
+        path: .vimrc
+    ~/.zshrc:
+        relink: true
+        path: .zshrc
+    ~/.aliases: .aliases
+    #~/.config/redsfhit.conf: redshift.conf
+
+- shell:
+    - [git submodule update --init --recursive, Installing submodules]
+    #- [tmux source ~/.tmux.conf, Source tmux config]
+    #- [source ~/.zshrc, Source zshrc config]
+    #- [source ~/.vimrc, Source vimrc config]
