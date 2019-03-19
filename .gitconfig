@@ -1,0 +1,9 @@
+[core]
+	editor = vim
+[user]
+	email = sruizdegopegui@gmail.com
+	name = sarudego
+
+[merge]
+	tool = vimdiff
+
