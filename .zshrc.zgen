@@ -1,0 +1,86 @@
+## load zgen
+source "${HOME}/.zgen/zgen.zsh"
+
+# if the init script doesn't exist
+if ! zgen saved; then
+
+  # specify plugins here
+  zgen oh-my-zsh
+  zgen oh-my-zsh plugins/git
+  zgen oh-my-zsh plugins/command-not-found
+  zgen load unixorn/autoupdate-zgen
+  zgen load twang817/zsh-run-help
+  zgen load chrissicool/zsh-256color
+  zgen load djui/alias-tips
+  zgen load Cloudstek/zsh-plugin-appup  # util for docker-compose.yml file
+  zgen load mafredri/zsh-async
+  zgen load gretzky/auto-color-ls
+  zgen load desyncr/auto-ls
+  zgen load wting/autojump
+  zgen load hlissner/zsh-autopair
+  zgen load zsh-users/zsh-autosuggestions
+  zgen load Tarrasch/zsh-bd  # jump back a specific folder
+  zgen load zsh-users/zsh-completions
+  zgen load zsh-users/zsh-history-substring-search
+  zgen load zsh-users/zsh-syntax-highlighting
+
+
+
+  ## Git
+  zgen load unixorn/git-extra-commands
+  zgen load elstgav/branch-manager
+  zgen load wfxr/forgit
+
+
+  ## Python
+  zgen load MichaelAquilina/zsh-autoswitch-virtualenv
+
+  ## Docker
+  zgen load srijanshetty/docker-zsh
+
+  ## Other
+  zgen load skx/sysadmin-util
+  zgen load supercrabtree/k  # is like ls with git support
+
+  # generate the init script from plugins above
+  zgen save
+
+  # remove init script each time add/remove plugin
+  #zgen reset
+fi
+
+## Lines configured by zsh-newuser-install
+## History
+HISTFILE=~/.zsh_history
+HISTSIZE=10000
+SAVEHIST=5000
+
+# Search on history
+[[ -n "${key[PageUp]}"   ]]  && bindkey  "${key[PageUp]}"    history-beginning-search-backward
+[[ -n "${key[PageDown]}" ]]  && bindkey  "${key[PageDown]}"  history-beginning-search-forward
+
+## setopt options
+setopt HIST_IGNORE_DUPS
+# remove duplicate lines manually with:
+# awk -i inplace '!x[$0]++' ~/.zsh_history
+setopt autocd notify
+#setopt completealiases
+bindkey -v
+
+## The following lines were added by compinstall
+zstyle :compinstall filename '/home/dexras/.zshrc'
+zstyle ':completion:*' menu select  # autocomplete with arrows
+zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}'
+
+autoload -Uz compinit && compinit
+autoload -Uz promptinit && promptinit
+
+## Command not found hook
+source /usr/share/doc/pkgfile/command-not-found.zsh
+
+source ~/powerlevel10k/powerlevel10k.zsh-theme
+source ~/.powerlevel9k
+
+
+
+
