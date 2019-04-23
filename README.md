@@ -1,8 +1,18 @@
-# .dotfiles
+ .dotfiles
+==========
 
-This script will contain all the configuration of my .dotfiles, its installation with dotbot, and will also contain ssh hardening scripts among other utils scripts.
+![prompt](https://s3-eu-west-1.amazonaws.com/sarudego/console1.png)
+
+This repo will contain all the configuration of my .dotfiles, its installation with dotbot, and will also contain ssh hardening scripts among other utils scripts.
 
 It is in progress.
+
+## Motivation
+
+
+## Built With
+
+* [Dotbot](https://github.com/anishathalye/dotbot) - Dotfiles automation tool used
 
 ## Getting Started
 
@@ -10,7 +20,7 @@ The installation of the dotfiles is done by automation with dotbot.
 
 If you want to use the ssh script, install and configure fail2ban and ssh in addition to creating a new user, so it is recommended to use it on the first access, or skip the unwanted steps.
 
-### Prerequisites
+## Prerequisites
 
 What things you need to install the software and how to install them.
 
@@ -21,7 +31,7 @@ ln -s /etc/ca-certificates/extracted/ca-bundle.trust.crt /etc/ssl/certs/ca-certi
 pip install enum34
 ```
 
-### Installing
+## Installing
 
 Steps for install .dotfiles and configure hardening ssh.
 
@@ -31,18 +41,13 @@ Steps for install .dotfiles and configure hardening ssh.
 
 This step makes a backup of your current .dotfiles, identifies the OS and starts the appropriate script.
 
+## Others functionalities
 
 ```
 ./utils/init_secure.sh
 ```
 
 This step install and configure fail2ban and ssh for hardening the ssh access.
-
-
-## Built With
-
-* [Dotbot](https://github.com/anishathalye/dotbot) - Dotfiles automation tool used
-
 
 ## Authors
 
