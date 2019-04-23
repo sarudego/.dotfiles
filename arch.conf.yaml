@@ -10,14 +10,19 @@
 - shell:
     - [sh pre-install.sh, Running pre installation script]
     - [git submodule update --init --recursive, Installing submodules]
-    - [mkdir -p ~/.oh-my-zsh/custom/, Creating oh-my-zsh custom folders]
-    - [mkdir -p ~/.oh-my-zsh/custom/plugins, Creating oh-my-zsh custom plugins folders]
+    #- [mkdir -p ~/.oh-my-zsh/custom/, Creating oh-my-zsh custom folders]
+    #- [mkdir -p ~/.oh-my-zsh/custom/plugins, Creating oh-my-zsh custom plugins folders]
+    - []
     #- [pip3 install --user pynvim, Install pynvim]
     #- [pip3 install neovim, Install neovim with python3 support]
     #- [sudo localedef -f UTF-8 -i en_US en_US.UTF-8, Stablishing locales]
 
 - pacaur:
-    - clipit
+    - fzf
+    - zsh-theme-powerlevel9k
+    - awesome-terminal-fonts
+    - pkgfile
+    #- clipit
     - zsh
     - curl
     - wget
@@ -27,6 +32,7 @@
     - tmux
     - rxvt-unicode
     - git
+    - terminator
     # - redshift
 
 - link:
