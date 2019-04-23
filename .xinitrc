@@ -1,0 +1,39 @@
+## Set synaptics touchpad options
+synclient TapButton1=1
+
+[[ -f ~/.Xresources ]] && xrdb -merge ~/.Xresources
+
+## Allow icons for dolphin
+export QT_QPA_PLATFORMTHEME="qt5ct"
+
+# urxvt daemon
+export RXVT_SOCKET=$XDG_RUNTIME_DIR/urxvtd
+urxvtd -q -f -o
+
+# keyboard layout
+# toogle us <-> es with alt+shift
+# caps lock -> ctrl
+#setxkbmap -layout us,es -option ctrl:nocaps,grp:alt_shift_toggle
+
+# Add wallpaper
+feh --bg-fill ~/Pictures/vimwallpaper.jpg
+
+# Enable compositor manager
+compton -b --config ~/.config/compton/compton.conf
+
+# Enable redshift temperature
+# pgrep redshift &>/dev/null || redshift &/dev/null &
+
+
+# Enable bloq num
+run numlockx &
+
+## Start window manager
+exec i3
+#exec awesome
+#exec startdde
+
+
+#export GDK_BACKEND=x11
+#exec gnome-session
+
