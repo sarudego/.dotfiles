@@ -1,102 +1,120 @@
-# If you come from bash you might have to change your $PATH.
-  # export PATH=$HOME/bin:/usr/local/bin:$PATH
+## load zgen
+source "${HOME}/.zgen/zgen.zsh"
 
-# Path to your oh-my-zsh installation.
-export ZSH="$HOME/.oh-my-zsh"
+# if the init script doesn't exist
+if ! zgen saved; then
 
-#ZSH_THEME="kolo"
-ZSH_THEME="powerlevel9k/powerlevel9k"
+  # specify plugins here
+  zgen oh-my-zsh
+  zgen oh-my-zsh plugins/git
+  #zgen oh-my-zsh plugins/command-not-found
+  #zgen load unixorn/autoupdate-zgen
+  zgen load twang817/zsh-run-help
+  zgen load chrissicool/zsh-256color
+  zgen load djui/alias-tips
+  zgen load Cloudstek/zsh-plugin-appup  # util for docker-compose.yml file
+  #zgen load mafredri/zsh-async
+  #zgen load gretzky/auto-color-ls   # ---
+  #zgen load desyncr/auto-ls    # ---
+  #zgen load wting/autojump    # ---
+  #zgen load hlissner/zsh-autopair    # ---
+  zgen load zsh-users/zsh-autosuggestions
+  zgen load Tarrasch/zsh-bd  # jump back a specific folder
+  zgen load zsh-users/zsh-completions
+  #zgen load zsh-users/zsh-history-substring-search
+  zgen load zsh-users/zsh-syntax-highlighting
 
+  ## Git
+  #zgen load elstgav/branch-manager  # needs oh_my_zsh
 
-# Uncomment the following line to use case-sensitive completion.
-CASE_SENSITIVE="false"
+  ## Python
+  zgen load MichaelAquilina/zsh-autoswitch-virtualenv
 
-HIST_STAMPS="dd.mm.yyyy"
-HIST_IGNORE_SPACE="true"
-setopt append_history           # append
-setopt hist_ignore_all_dups     # no duplicate
-unsetopt hist_ignore_space      # ignore space prefixed commands
-setopt hist_reduce_blanks       # trim blanks
-setopt hist_verify              # show before executing history commands
-setopt inc_append_history       # add commands as they are typed, don't wait until shell exit
-setopt share_history            # share hist between sessions
-setopt bang_hist                # !keyword
+  ## Docker
 
+  ## Other
+  #zgen load skx/sysadmin-util
+  zgen load supercrabtree/k  # is like ls with git support
 
+  # generate the init script from plugins above
+  zgen save
 
-plugins=(
-  git
-  autojump
-  zsh-autosuggestions
-)
-
-source $ZSH/oh-my-zsh.sh
-
-[[ -s /home/dexras/.autojump/etc/profile.d/autojump.sh ]] && source /home/dexras/.autojump/etc/profile.d/autojump.sh
-
-autoload -U compinit && compinit -u
-
-# give us access to ^Q
-stty -ixon
-
-# vi mode
-#bindkey -v
-#bindkey "^F" vi-cmd-mode
-
-# handy keybindings
-#bindkey "^A" beginning-of-line
-#bindkey "^E" end-of-line
-#bindkey "^K" kill-line
-#bindkey "^R" history-incremental-search-backward
-#bindkey "^P" history-search-backward
-#bindkey "^Y" accept-and-hold
-#bindkey "^N" insert-last-word
-#bindkey "^Q" push-line-or-edit
-
-
-
-# other
-#bindkey "^[[1;5D" backward-word
-#bindkey "^[[1;5C" forward-word
-# bindkey '^[^[[D' backward-word
-# bindkey '^[^[[C' forward-word
-# bindkey '^[[5D' beginning-of-line
-# bindkey '^[[5C' end-of-line
-# bindkey '^[[3~' delete-char
-# bindkey '^?' backward-delete-char
-
-
-# Better history
-# Credits to https://coderwall.com/p/jpj_6q/zsh-better-history-searching-with-arrow-keys
-autoload -U up-line-or-beginning-search
-autoload -U down-line-or-beginning-search
-zle -N up-line-or-beginning-search
-zle -N down-line-or-beginning-search
-bindkey "^[[A" up-line-or-beginning-search # Up
-bindkey "^[[B" down-line-or-beginning-search # Down
-
-ZSH_TMUX_AUTOSTART="true"
-
-if [ -f "~/.aliases" ]
-then
-  source ~/.aliases
+  # remove init script each time add/remove plugin
+  #zgen reset
 fi
 
-export EDITOR='vim'
-
-
+## Plugins config
 # zsh-autosuggestions
-# bindkey '^ ' autosuggest-accept
-zstyle ':bracketed-paste-magic' active-widgets '.self-*'
+ZSH_AUTOSUGGEST_USE_ASYNC=true
 
-# source contents from ~/.zshrc.d
-#if [[ -d $HOME/.zshrc.d/ ]]; then
-  #for file in $HOME/.zshrc.d/*.zsh; do
-    #source ${file}
-  #done
-#fi
 
-POWERLEVEL9K_MODE='nerdfont-complete'
+## Lines configured by zsh-newuser-install
+## History
+HISTFILE=$HOME/.zsh_history
+HISTSIZE=10000
+SAVEHIST=10000
 
-export PATH=$PATH:/usr/local/go/bin
-export GOPATH=$HOME/go
+# remove duplicate lines manually with:
+# awk -i inplace '!x[$0]++' ~/.zsh_history
+
+# Search on history
+[[ -n "${key[PageUp]}"   ]]  && bindkey  "${key[PageUp]}"    history-beginning-search-backward
+[[ -n "${key[PageDown]}" ]]  && bindkey  "${key[PageDown]}"  history-beginning-search-forward
+
+## setopt options
+CASE_SENSITIVE="false"
+HIST_STAMPS="dd.mm.yyyy"
+HIST_IGNORE_SPACE="true"
+setopt HIST_IGNORE_DUPS
+setopt APPEND_HISTORY           # append
+setopt HIST_IGNORE_ALL_DUPS     # no duplicate
+setopt HIST_SAVE_NO_DUPS        # older commands that duplicate newer ones are omitted
+setopt HIST_IGNORE_SPACE        # ignore space prefixed commands
+setopt HIST_REDUCE_BLANKS       # trim blanks
+setopt HIST_VERIFY              # show before executing history commands
+setopt APPEND_HISTORY           # adds history
+setopt INC_APPEND_HISTORY       # add commands as they are typed, don't wait until shell exit
+setopt SHARE_HISTORY            # share hist between sessions
+setopt HIST_EXPIRE_DUPS_FIRST   # delete duplicates first when HISTFILE size exceeds HISTSIZE
+
+setopt BANG_HIST                # !keyword
+setopt CORRECT                  # try correct bad commands
+
+#setopt autocd autopushd pushdsilent pushdminus pushdignoredups
+setopt COMPLETE_ALIASES
+setopt notify
+
+## bindkeys config
+bindkey '^[[3~' delete-char
+bindkey -v  # vi mode, not necessary if oh-my-zsh is allowed
+bindkey '^R' history-incremental-search-backward
+
+#bindkey "^[[A" up-line-or-beginning-search # Up
+#bindkey "^[[B" down-line-or-beginning-search # Down
+
+## give us access to ^Q
+#stty -ixon
+
+## The following lines were added by compinstall
+#zstyle :compinstall filename '$HOME/.zshrc'
+#zstyle ':completion:*' menu select  # autocomplete with arrows
+#zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}'
+
+autoload -Uz compinit && compinit  # smart auto completion
+#autoload -Uz promptinit && promptinit
+
+## Command not found hook
+source /usr/share/doc/pkgfile/command-not-found.zsh
+
+## Personal
+#if [ "$TMUX" = "" ]; then tmux; fi
+
+[ -f $HOME/.aliases ] && source $HOME/.aliases
+
+# Load Nerd Fonts with Powerlevel9k theme for Zsh
+source $HOME/powerlevel10k/powerlevel10k.zsh-theme  # this line is must for powerlevel9k
+source $HOME/.powerlevel9k
+
+
+
+
