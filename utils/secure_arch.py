@@ -19,7 +19,7 @@ from os.path import expanduser
 def show_info(task):
   time.sleep(3)
   print("\n\n [x] ",task)
-  
+
 
 def skip_task():
   answer = input("Do you want skip this step? [Yy/Nn]: ")
@@ -34,7 +34,7 @@ def skip_task():
       return 1
     else:
       return 0
-  
+
 
 def sed(pattern, replace, source, dest=None, count=0):
   """Reads a source file and writes the destination file.
@@ -46,7 +46,7 @@ def sed(pattern, replace, source, dest=None, count=0):
   replace (str): replacement str
   source  (str): input filename
   count (int): number of occurrences to replace
-  dest (str):   destination filename, if not given, source will be over written.        
+  dest (str):   destination filename, if not given, source will be over written.
   """
 
   fin = open(source, 'r')
@@ -75,9 +75,9 @@ def sed(pattern, replace, source, dest=None, count=0):
   fout.close()
 
   if not dest:
-    shutil.move(name, source)  
-  
-  
+    shutil.move(name, source)
+
+
 
 def install_vim():
   show_info("Installing vim...")
@@ -99,7 +99,6 @@ def change_root_password():
     print('Change root password done.')
 
 
-                    
 def add_new_user():
   show_info("Adding new user...")
   answer = skip_task()
@@ -113,9 +112,9 @@ def add_new_user():
     sed('# %wheel ALL=(ALL) ALL', '%wheel ALL=(ALL) ALL', '/etc/sudoers')
     print('Create new user done.')
     return new_user
-  
 
-def install_fail2ban():  
+
+def install_fail2ban():
   show_info("Installing fail2ban...")
   answer = skip_task()
   if not answer:
@@ -127,7 +126,7 @@ def install_fail2ban():
       print('Fail2ban installed done.')
     show_info("Modifying config fail2ban...")
     # TODO: fix this
-    
+
 #     subprocess.call(["cp", "/etc/fail2ban/jail.conf", "/etc/fail2ban/jail.conf.backup"])
 #     # add this below line after [sshd]
 #     #  enabled  = true
@@ -147,8 +146,8 @@ def regenerate_ssh_keys():
     subprocess.call(["ssh-keygen", "-t", "dsa", "-f", "/etc/ssh/ssh_host_dsa_key"])
     subprocess.call(["ssh-keygen", "-t", "rsa", "-f", "/etc/ssh/ssh_host_rsa_key"])
     print('Done.')
-  
-    
+
+
 def regenerate_moduli():
   #TODO: fix this
   show_info("Regenerate moduli... this step can take some minutes...")
@@ -160,8 +159,8 @@ def regenerate_moduli():
     subprocess.call(["rm", "moduli-2048"])
     print('Done.')
 
-  
-def modify_config_sshd(new_user):  
+
+def modify_config_sshd(new_user):
   #TODO: fix this
   show_info("Modifying config sshd...")
   answer = skip_task()
@@ -182,17 +181,23 @@ def modify_config_sshd(new_user):
     sed('#X11Forwarding yes', 'X11Forwarging no', '/etc/ssh/sshd_config')
     #subprocess.Popen(["sed", "-i", "--", "'s/#UseDns no/UseDNS yes/g'", "/etc/ssh/sshd_config"])
     sed('#UseDns no', 'UseDNS yes', '/etc/ssh/sshd_config')
-    
-    # PasswordAuthentication no when works with ssh keys
+
+    # PasswordAuthentication not use it when works with ssh keys
     #sed -i -- 's/#PasswordAuthentication yes/PasswordAuthentication yes/g' /etc/ssh/sshd_config
-    
+
     sed('#PasswordAuthentication yes', 'PasswordAuthentication yes', '/etc/ssh/sshd_config')
     #subprocess.Popen(["sed", "-i", "--", "'s/#PasswordEmptyPasswords no/PasswordEmptyPasswords yes/g'", "/etc/ssh/sshd_config"])
     sed('#PasswordEmptyPasswords no', 'PasswordEmptyPasswords yes', '/etc/ssh/sshd_config')
-    sed('#HostKey /etc/ssh/ssh_host_dsa_key', 'HostKey /etc/ssh/ssh_host_dsa_key', '/etc/ssh/sshd_config') 
-    sed('#HostKey /etc/ssh/ssh_host_rsa_key', 'HostKey /etc/ssh/ssh_host_rsa_key', '/etc/ssh/sshd_config')
+
+    sed('#HostKey /etc/ssh/ssh_host_dsa_key', 'HostKey /etc/ssh/ssh_host_dsa_key', '/etc/ssh/sshd_config')
+    # sed -i '/HostKey \/etc\/ssh\/ssh_host_rsa_key/s/^#//' /etc/ssh/sshd_config
+    sed('#HostKey /etc/ssh/ssh_host_rsa_key', '^#', '/etc/ssh/sshd_config')
+    # sed('#HostKey /etc/ssh/ssh_host_rsa_key', 'HostKey /etc/ssh/ssh_host_rsa_key', '/etc/ssh/sshd_config')
     #sed('#HostKey /etc/ssh/ssh_host_rsa_key', 'RSAAuthentication yes', '/etc/ssh/sshd_config')
     #sed('#HostKey /etc/ssh/ssh_host_rsa_key', 'PubkeyAuthentication yes', '/etc/ssh/sshd_config')
+
+    sed('/KeyRegenerationInterval', '^#', '/etc/ssh/sshd_config')
+
     subprocess.call(["mv", "motd", "/etc/motd"])
     subprocess.call(["mv", "banner", "/etc/issue"])
     #subprocess.Popen(["sed", "-i", "--", "'s/PrintMotd no/PrintMotd yes/g'", "/etc/ssh/sshd_config"])
@@ -204,11 +209,11 @@ def modify_config_sshd(new_user):
       f.write('AllowUsers {} {}'.format(new_user, '\n'))
       # f.write('RSAAuthentication yes {}'.format('\n'))  # This options works just with Protocol version 2
       f.write('PubkeyAuthentication yes {}'.format('\n'))
-    
+
     subprocess.call(["chmod", "600", "/etc/ssh/ssh_host_dsa_key"])
     subprocess.call(["chmod", "600", "/etc/ssh/ssh_host_rsa_key"])
-  
-  
+
+
 def test_config_sshd():
   show_info("Test config sshd...")
   answer = skip_task()
@@ -224,40 +229,40 @@ def test_config_sshd():
       print('ssh has some problems... you should fix it')
       print(test_sshd)
 
-      
-def test_ssh_audit(): 
+
+def test_ssh_audit():
   show_info("Auditing ssh server...")
   print("SSH Audit is a tool for ssh server auditing, you can found it in https://github.com/arthepsy/ssh-audit")
   answer = skip_task()
   if not answer:
     home = expanduser("~")
-    subprocess.call(["git","clone", "https://github.com/arthepsy/ssh-audit"], cwd=home) 
+    subprocess.call(["git","clone", "https://github.com/arthepsy/ssh-audit"], cwd=home)
     subprocess.call(["python", home + "/ssh-audit/ssh-audit.py", "localhost"])
-  
-  
-def change_user(new_user):    
+
+
+def change_user(new_user):
   show_info("Changing to {}...".format(new_user))
   answer = skip_task()
   if not answer:
     subprocess.call(["su", "-", new_user])
 
-    
+
 def main():
-  subprocess.call(["clear"])           
+  subprocess.call(["clear"])
   install_vim()
   change_root_password()
-  new_user = add_new_user() 
-  regenerate_ssh_keys()                  
-  regenerate_moduli()  
-  modify_config_sshd(new_user)                  
+  new_user = add_new_user()
+  regenerate_ssh_keys()
+  regenerate_moduli()
+  modify_config_sshd(new_user)
   test_config_sshd()
   test_ssh_audit()
-  install_fail2ban()                            
+  install_fail2ban()
   if new_user != '' is not None:
     change_user(new_user)
-                    
- 
+
+
 
 main()
-  
+
 
