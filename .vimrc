@@ -55,7 +55,7 @@ set cpoptions+=$               " When making a change, don't
                                " put a `$` sign at the end of
                                " the changed text.
 
-set colorcolumn=73             " Highlight certain column(s).
+set colorcolumn=80             " Highlight certain column(s).
 set cursorline                 " Highlight the current line.
 "set directory=~/.vim/swaps     " Set directory for swap files.
 set encoding=utf-8 nobomb      " Use UTF-8 without BOM.
@@ -205,7 +205,7 @@ call plug#begin('~/.vim/plugged')
 
 
 source ~/.vim/plug-general.vim
-source ~/.vim/plug-web.vim
+" source ~/.vim/plug-web.vim
 source ~/.vim/plug-python.vim
 source ~/.vim/plug-other.vim
 

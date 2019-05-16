@@ -85,8 +85,11 @@ setopt COMPLETE_ALIASES
 setopt notify
 
 ## bindkeys config
+bindkey -e
 bindkey '^[[3~' delete-char
-bindkey -v  # vi mode, not necessary if oh-my-zsh is allowed
+bindkey "^[[1;5C" emacs-forward-word
+bindkey "^[[1;5D" emacs-backward-word
+#bindkey -v  # vi mode, not necessary if oh-my-zsh is allowed
 bindkey '^R' history-incremental-search-backward
 
 #bindkey "^[[A" up-line-or-beginning-search # Up
@@ -104,10 +107,12 @@ autoload -Uz compinit && compinit  # smart auto completion
 #autoload -Uz promptinit && promptinit
 
 ## Command not found hook
-source /usr/share/doc/pkgfile/command-not-found.zsh
+if [[ -s '/etc/zsh_command_not_found' ]]; then
+  source '/etc/zsh_command_not_found'
+fi
 
 ## Personal
-#if [ "$TMUX" = "" ]; then tmux; fi
+if [ "$TMUX" = "" ]; then tmux; fi
 
 [ -f $HOME/.aliases ] && source $HOME/.aliases
 
