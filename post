@@ -370,20 +370,22 @@ install_ssh(){
   fi
 }
 #}}}
-#NFS {{{
-install_nfs(){
-  print_title "NFS - https://wiki.archlinux.org/index.php/Nfs"
-  print_info "NFS allowing a user on a client computer to access files over a network in a manner similar to how local storage is accessed."
-  read_input_text "Install nfs" $NFS
-  if [[ $OPTION == y ]]; then
-    package_install "nfs-utils"
-    system_ctl enable rpcbind
-    system_ctl enable nfs-client.target
-    system_ctl enable remote-fs.target
-    pause_function
-  fi
-}
-#}}}
+
+##NFS {{{
+#install_nfs(){
+  #print_title "NFS - https://wiki.archlinux.org/index.php/Nfs"
+  #print_info "NFS allowing a user on a client computer to access files over a network in a manner similar to how local storage is accessed."
+  #read_input_text "Install nfs" $NFS
+  #if [[ $OPTION == y ]]; then
+    #package_install "nfs-utils"
+    #system_ctl enable rpcbind
+    #system_ctl enable nfs-client.target
+    #system_ctl enable remote-fs.target
+    #pause_function
+  #fi
+#}
+##}}}
+
 #ZSH {{{
 install_zsh(){
   print_title "ZSH - https://wiki.archlinux.org/index.php/Zsh"
@@ -391,99 +393,68 @@ install_zsh(){
   read_input_text "Install zsh" $ZSH
   if [[ $OPTION == y ]]; then
     package_install "zsh"
-    read_input_text "Install oh-my-zsh" $OH_MY_ZSH
-    if [[ $OPTION == y ]]; then
-      if [[ -f /home/${username}/.zshrc ]]; then
-        read_input_text "Replace current .zshrc file"
-        if [[ $OPTION == y ]]; then
-          run_as_user "mv /home/${username}/.zshrc /home/${username}/.zshrc.bkp"
-          run_as_user "sh -c \"$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)\""
-          run_as_user "$EDITOR /home/${username}/.zshrc"
-        fi
-      else
-        run_as_user "sh -c \"$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)\""
-        run_as_user "$EDITOR /home/${username}/.zshrc"
-      fi
-    fi
+    #read_input_text "Install oh-my-zsh" $OH_MY_ZSH
+    #if [[ $OPTION == y ]]; then
+      #if [[ -f /home/${username}/.zshrc ]]; then
+        #read_input_text "Replace current .zshrc file"
+        #if [[ $OPTION == y ]]; then
+          #run_as_user "mv /home/${username}/.zshrc /home/${username}/.zshrc.bkp"
+          #run_as_user "sh -c \"$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)\""
+          #run_as_user "$EDITOR /home/${username}/.zshrc"
+        #fi
+      #else
+        #run_as_user "sh -c \"$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)\""
+        #run_as_user "$EDITOR /home/${username}/.zshrc"
+      #fi
+    #fi
     pause_function
   fi
 }
 #}}}
-#SAMBA {{{
-install_samba(){
-  print_title "SAMBA - https://wiki.archlinux.org/index.php/Samba"
-  print_info "Samba is a re-implementation of the SMB/CIFS networking protocol, it facilitates file and printer sharing among Linux and Windows systems as an alternative to NFS."
-  read_input_text "Install Samba" $SAMBA
-  if [[ $OPTION == y ]]; then
-    package_install "wget samba smbnetfs"
-    [[ ! -f /etc/samba/smb.conf ]] && wget -q -O /etc/samba/smb.conf "https://git.samba.org/samba.git/?p=samba.git;a=blob_plain;f=examples/smb.conf.default;hb=HEAD"
-    local CONFIG_SAMBA=`cat /etc/samba/smb.conf | grep usershare`
-    if [[ -z $CONFIG_SAMBA ]]; then
-      # configure usershare
-      export USERSHARES_DIR="/var/lib/samba/usershare"
-      export USERSHARES_GROUP="sambashare"
-      mkdir -p ${USERSHARES_DIR}
-      groupadd ${USERSHARES_GROUP}
-      chown root:${USERSHARES_GROUP} ${USERSHARES_DIR}
-      chmod 1770 ${USERSHARES_DIR}
-      sed -i -e '/\[global\]/a\\n   usershare path = /var/lib/samba/usershare\n   usershare max shares = 100\n   usershare allow guests = yes\n   usershare owner only = False' /etc/samba/smb.conf
-      sed -i -e '/\[global\]/a\\n   socket options = IPTOS_LOWDELAY TCP_NODELAY SO_KEEPALIVE\n   write cache size = 2097152\n   use sendfile = yes\n' /etc/samba/smb.conf
-      usermod -a -G ${USERSHARES_GROUP} ${username}
-      sed -i '/user_allow_other/s/^#//' /etc/fuse.conf
-      modprobe fuse
-    fi
-    echo "Enter your new samba account password:"
-    pdbedit -a -u ${username}
-    while [[ $? -ne 0 ]]; do
-      pdbedit -a -u ${username}
-    done
-    # enable services
-    system_ctl enable smb.service
-    system_ctl enable nmb.service
-    pause_function
-  fi
-}
-#}}}
-#READAHEAD {{{
-enable_readahead(){
-  print_title "Readahead - https://wiki.archlinux.org/index.php/Improve_Boot_Performance"
-  print_info "Systemd comes with its own readahead implementation, this should in principle improve boot time. However, depending on your kernel version and the type of your hard drive, your mileage may vary (i.e. it might be slower)."
-  read_input_text "Enable Readahead" $READAHEAD
-  if [[ $OPTION == y ]]; then
-    system_ctl enable systemd-readahead-collect
-    system_ctl enable systemd-readahead-replay
-    pause_function
-  fi
-}
-#}}}
-#ZRAM {{{
-install_zram (){
-  print_title "ZRAM - https://wiki.archlinux.org/index.php/Maximizing_Performance"
-  print_info "Zram creates a device in RAM and compresses it. If you use for swap means that part of the RAM can hold much more information but uses more CPU. Still, it is much quicker than swapping to a hard drive. If a system often falls back to swap, this could improve responsiveness. Zram is in mainline staging (therefore its not stable yet, use with caution)."
-  read_input_text "Install Zram" $ZRAM
-  if [[ $OPTION == y ]]; then
-    aur_package_install "zramswap"
-    system_ctl enable zramswap
-    pause_function
-  fi
-}
-#}}}
-#TLP {{{
-install_tlp(){
-  print_title "TLP - https://wiki.archlinux.org/index.php/Tlp"
-  print_info "TLP is an advanced power management tool for Linux. It is a pure command line tool with automated background tasks and does not contain a GUI."
-  read_input_text "Install TLP" $TLP
-  if [[ $OPTION == y ]]; then
-    package_install "tlp"
-    system_ctl enable tlp.service
-    system_ctl enable tlp-sleep.service
-    system_ctl mask systemd-rfkill.service
-    system_ctl mask systemd-rfkill.socket
-    tlp start
-    pause_function
-  fi
-}
-#}}}
+
+##READAHEAD {{{
+#enable_readahead(){
+  #print_title "Readahead - https://wiki.archlinux.org/index.php/Improve_Boot_Performance"
+  #print_info "Systemd comes with its own readahead implementation, this should in principle improve boot time. However, depending on your kernel version and the type of your hard drive, your mileage may vary (i.e. it might be slower)."
+  #read_input_text "Enable Readahead" $READAHEAD
+  #if [[ $OPTION == y ]]; then
+    #system_ctl enable systemd-readahead-collect
+    #system_ctl enable systemd-readahead-replay
+    #pause_function
+  #fi
+#}
+##}}}
+
+##ZRAM {{{
+#install_zram (){
+  #print_title "ZRAM - https://wiki.archlinux.org/index.php/Maximizing_Performance"
+  #print_info "Zram creates a device in RAM and compresses it. If you use for swap means that part of the RAM can hold much more information but uses more CPU. Still, it is much quicker than swapping to a hard drive. If a system often falls back to swap, this could improve responsiveness. Zram is in mainline staging (therefore its not stable yet, use with caution)."
+  #read_input_text "Install Zram" $ZRAM
+  #if [[ $OPTION == y ]]; then
+    #aur_package_install "zramswap"
+    #system_ctl enable zramswap
+    #pause_function
+  #fi
+#}
+##}}}
+
+##TLP {{{
+#install_tlp(){
+  #print_title "TLP - https://wiki.archlinux.org/index.php/Tlp"
+  #print_info "TLP is an advanced power management tool for Linux. It is a pure command line tool with automated background tasks and does not contain a GUI."
+  #read_input_text "Install TLP" $TLP
+  #if [[ $OPTION == y ]]; then
+    #package_install "tlp"
+    #system_ctl enable tlp.service
+    #system_ctl enable tlp-sleep.service
+    #system_ctl mask systemd-rfkill.service
+    #system_ctl mask systemd-rfkill.socket
+    #tlp start
+    #pause_function
+  #fi
+#}
+##}}}
+
 #XORG {{{
 install_xorg(){
   print_title "XORG - https://wiki.archlinux.org/index.php/Xorg"
@@ -495,14 +466,16 @@ install_xorg(){
   pause_function
 }
 #}}}
-#WAYLAND {{{
-install_wayland(){
-  print_title "WAYLAND - https://wiki.archlinux.org/index.php/Wayland"
-  print_info "Wayland is a protocol for a compositing window manager to talk to its clients, as well as a library implementing the protocol. "
-  package_install "weston xorg-server-xwayland"
-  pause_function
-}
-#}}}
+
+##WAYLAND {{{
+#install_wayland(){
+  #print_title "WAYLAND - https://wiki.archlinux.org/index.php/Wayland"
+  #print_info "Wayland is a protocol for a compositing window manager to talk to its clients, as well as a library implementing the protocol. "
+  #package_install "weston xorg-server-xwayland"
+  #pause_function
+#}
+##}}}
+
 #FONT CONFIGURATION {{{
 font_config(){
   print_title "FONTS CONFIGURATION - https://wiki.archlinux.org/index.php/Font_Configuration"
@@ -511,6 +484,7 @@ font_config(){
   pause_function
 }
 #}}}
+#
 #VIDEO CARDS {{{
 create_ramdisk_environment(){
   if [ "$(ls /boot | grep hardened -c)" -gt "0" ]; then
@@ -525,35 +499,8 @@ install_video_cards(){
   package_install "dmidecode"
   print_title "VIDEO CARD"
   check_vga
-  #Virtualbox {{{
-  if [[ ${VIDEO_DRIVER} == virtualbox ]]; then
-    if [ "$(lspci | grep 'VMware SVGA' -c)" -gt "0" ]; then
-      package_install "xf86-video-vmware"
-    fi
-    if [ "$(ls /boot | grep hardened -c)" -gt "0" ] || [ "$(ls /boot | grep lts -c)" -gt "0" ]; then
-      package_install "virtualbox-guest-dkms virtualbox-guest-utils mesa-libgl"
-    else
-      package_install "virtualbox-guest-modules-arch virtualbox-guest-utils mesa-libgl"
-    fi
-    add_module "vboxguest vboxsf vboxvideo" "virtualbox-guest"
-    add_user_to_group ${username} vboxsf
-    system_ctl enable vboxservice
-    create_ramdisk_environment
-  #}}}
-  #VMware {{{
-  elif [[ ${VIDEO_DRIVER} == vmware ]]; then
-    package_install "xf86-video-vmware xf86-input-vmmouse"
-    if [ "$(ls /boot | grep hardened -c)" -gt "0" ] || [ "$(ls /boot | grep lts -c)" -gt "0" ]; then
-      aur_package_install "open-vm-tools-dkms"
-    else
-      package_install "open-vm-tools"
-    fi
-    cat /proc/version > /etc/arch-release
-    system_ctl enable vmtoolsd
-    create_ramdisk_environment
-  #}}}
   #Bumblebee {{{
-  elif [[ ${VIDEO_DRIVER} == bumblebee ]]; then
+  if [[ ${VIDEO_DRIVER} == bumblebee ]]; then
     XF86_DRIVERS=$(pacman -Qe | grep xf86-video | awk '{print $1}')
     [[ -n $XF86_DRIVERS ]] && pacman -Rcsn $XF86_DRIVERS
     pacman -S --needed xf86-video-intel bumblebee nvidia
@@ -589,22 +536,6 @@ install_video_cards(){
     replace_line '#*MODULES="nouveau"' 'MODULES="nouveau"' /etc/mkinitcpio.conf
     create_ramdisk_environment
   #}}}
-  #ATI {{{
-  elif [[ ${VIDEO_DRIVER} == ati ]]; then
-    [[ -f /etc/X11/xorg.conf.d/20-radeon.conf ]] && rm /etc/X11/xorg.conf.d/20-radeon.conf
-    [[ -f /etc/X11/xorg.conf ]] && rm /etc/X11/xorg.conf
-    package_install "xf86-video-${VIDEO_DRIVER} mesa-libgl mesa-vdpau libvdpau-va-gl"
-    add_module "radeon" "ati"
-    create_ramdisk_environment
-  #}}}
-  #AMDGPU {{{
-  elif [[ ${VIDEO_DRIVER} == amdgpu ]]; then
-    [[ -f /etc/X11/xorg.conf.d/20-radeon.conf ]] && rm /etc/X11/xorg.conf.d/20-radeon.conf
-    [[ -f /etc/X11/xorg.conf ]] && rm /etc/X11/xorg.conf
-    package_install "xf86-video-${VIDEO_DRIVER} vulkan-radeon mesa-libgl mesa-vdpau libvdpau-va-gl"
-    add_module "amdgpu radeon" "ati"
-    create_ramdisk_environment
-  #}}}
   #Intel {{{
   elif [[ ${VIDEO_DRIVER} == intel ]]; then
     package_install "xf86-video-${VIDEO_DRIVER} mesa-libgl libvdpau-va-gl"
@@ -624,97 +555,100 @@ install_video_cards(){
   pause_function
 }
 #}}}
-#CUPS {{{
-install_cups(){
-  print_title "CUPS - https://wiki.archlinux.org/index.php/Cups"
-  print_info "CUPS is the standards-based, open source printing system developed by Apple Inc. for Mac OS X and other UNIX-like operating systems."
-  read_input_text "Install CUPS (aka Common Unix Printing System)" $CUPS
-  if [[ $OPTION == y ]]; then
-    package_install "cups cups-pdf"
-    package_install "gutenprint ghostscript gsfonts foomatic-db foomatic-db-engine foomatic-db-nonfree foomatic-db-ppds foomatic-db-nonfree-ppds foomatic-db-gutenprint-ppds"
-    system_ctl enable org.cups.cupsd.service
-    pause_function
-  fi
-}
-#}}}
-#ADDITIONAL FIRMWARE {{{
-install_additional_firmwares(){
-  print_title "INSTALL ADDITIONAL FIRMWARES"
-  read_input_text "Install additional firmwares [Audio,Bluetooth,Scanner,Wireless]" $FIRMWARE
-  if [[ $OPTION == y ]]; then
-    while true
-    do
-      print_title "INSTALL ADDITIONAL FIRMWARES"
-      echo " 1) $(menu_item "aic94xx-firmware") $AUR"
-      echo " 2) $(menu_item "alsa-firmware")"
-      echo " 3) $(menu_item "b43-firmware") $AUR"
-      echo " 4) $(menu_item "b43-firmware-legacy") $AUR"
-      echo " 5) $(menu_item "bluez-firmware") [Broadcom BCM203x/STLC2300 Bluetooth]"
-      echo " 6) $(menu_item "broadcom-wl-dkms")"
-      echo " 7) $(menu_item "ipw2100-fw")"
-      echo " 8) $(menu_item "ipw2200-fw")"
-      echo " 9) $(menu_item "libffado") [Fireware Audio Devices]"
-      echo "10) $(menu_item "libmtp") [Android Devices]"
-      echo "11) $(menu_item "libraw1394") [IEEE1394 Driver]"
-      echo "12) $(menu_item "wd719x-firmware") $AUR"
-      echo ""
-      echo " d) DONE"
-      echo ""
-      FIRMWARE_OPTIONS+=" d"
-      read_input_options "$FIRMWARE_OPTIONS"
-      for OPT in ${OPTIONS[@]}; do
-        case "$OPT" in
-          1)
-            aur_package_install "aic94xx-firmware"
-            ;;
-          2)
-            package_install "alsa-firmware"
-            ;;
-          3)
-            aur_package_install "b43-firmware"
-            ;;
-          4)
-            aur_package_install "b43-firmware-legacy"
-            ;;
-          5)
-            package_install "bluez-firmware"
-            ;;
-          6)
-            package_install "broadcom-wl-dkms"
-            ;;
-          7)
-            package_install "ipw2100-fw"
-            ;;
-          8)
-            package_install "ipw2200-fw"
-            ;;
-          9)
-            package_install "libffado"
-            ;;
-          10)
-            package_install "libmtp"
-            package_install "android-udev"
-            ;;
-          11)
-            package_install "libraw1394"
-            ;;
-          12)
-            aur_package_install "wd719x-firmware"
-            ;;
-          "d")
-            break
-            ;;
-          *)
-            invalid_option
-            ;;
-        esac
-      done
-      source sharedfuncs_elihw
-      create_ramdisk_environment
-    done
-  fi
-}
-#}}}
+
+##CUPS {{{
+#install_cups(){
+  #print_title "CUPS - https://wiki.archlinux.org/index.php/Cups"
+  #print_info "CUPS is the standards-based, open source printing system developed by Apple Inc. for Mac OS X and other UNIX-like operating systems."
+  #read_input_text "Install CUPS (aka Common Unix Printing System)" $CUPS
+  #if [[ $OPTION == y ]]; then
+    #package_install "cups cups-pdf"
+    #package_install "gutenprint ghostscript gsfonts foomatic-db foomatic-db-engine foomatic-db-nonfree foomatic-db-ppds foomatic-db-nonfree-ppds foomatic-db-gutenprint-ppds"
+    #system_ctl enable org.cups.cupsd.service
+    #pause_function
+  #fi
+#}
+##}}}
+
+##ADDITIONAL FIRMWARE {{{
+#install_additional_firmwares(){
+  #print_title "INSTALL ADDITIONAL FIRMWARES"
+  #read_input_text "Install additional firmwares [Audio,Bluetooth,Scanner,Wireless]" $FIRMWARE
+  #if [[ $OPTION == y ]]; then
+    #while true
+    #do
+      #print_title "INSTALL ADDITIONAL FIRMWARES"
+      #echo " 1) $(menu_item "aic94xx-firmware") $AUR"
+      #echo " 2) $(menu_item "alsa-firmware")"
+      #echo " 3) $(menu_item "b43-firmware") $AUR"
+      #echo " 4) $(menu_item "b43-firmware-legacy") $AUR"
+      #echo " 5) $(menu_item "bluez-firmware") [Broadcom BCM203x/STLC2300 Bluetooth]"
+      #echo " 6) $(menu_item "broadcom-wl-dkms")"
+      #echo " 7) $(menu_item "ipw2100-fw")"
+      #echo " 8) $(menu_item "ipw2200-fw")"
+      #echo " 9) $(menu_item "libffado") [Fireware Audio Devices]"
+      #echo "10) $(menu_item "libmtp") [Android Devices]"
+      #echo "11) $(menu_item "libraw1394") [IEEE1394 Driver]"
+      #echo "12) $(menu_item "wd719x-firmware") $AUR"
+      #echo ""
+      #echo " d) DONE"
+      #echo ""
+      #FIRMWARE_OPTIONS+=" d"
+      #read_input_options "$FIRMWARE_OPTIONS"
+      #for OPT in ${OPTIONS[@]}; do
+        #case "$OPT" in
+          #1)
+            #aur_package_install "aic94xx-firmware"
+            #;;
+          #2)
+            #package_install "alsa-firmware"
+            #;;
+          #3)
+            #aur_package_install "b43-firmware"
+            #;;
+          #4)
+            #aur_package_install "b43-firmware-legacy"
+            #;;
+          #5)
+            #package_install "bluez-firmware"
+            #;;
+          #6)
+            #package_install "broadcom-wl-dkms"
+            #;;
+          #7)
+            #package_install "ipw2100-fw"
+            #;;
+          #8)
+            #package_install "ipw2200-fw"
+            #;;
+          #9)
+            #package_install "libffado"
+            #;;
+          #10)
+            #package_install "libmtp"
+            #package_install "android-udev"
+            #;;
+          #11)
+            #package_install "libraw1394"
+            #;;
+          #12)
+            #aur_package_install "wd719x-firmware"
+            #;;
+          #"d")
+            #break
+            #;;
+          #*)
+            #invalid_option
+            #;;
+        #esac
+      #done
+      #source sharedfuncs_elihw
+      #create_ramdisk_environment
+    #done
+  #fi
+#}
+##}}}
+
 #DESKTOP ENVIRONMENT {{{
 install_desktop_environment(){
   install_icon_theme() { #{{{
@@ -778,13 +712,10 @@ install_desktop_environment(){
     do
       print_title "DISPLAY MANAGER - https://wiki.archlinux.org/index.php/Display_Manager"
       print_info "A display manager, or login manager, is a graphical interface screen that is displayed at the end of the boot process in place of the default shell."
-      echo " 1) $(menu_item "entrance-git" "Entrance") $AUR"
-      echo " 2) $(menu_item "gdm" "GDM")"
-      echo " 3) $(menu_item "lightdm" "LightDM")"
-      echo " 4) $(menu_item "sddm" "SDDM")"
-      echo " 5) $(menu_item "slim" "Slim")"
-      echo " 6) $(menu_item "lxdm" "lxdm")"
-      echo " 7) $(menu_item "lxdm-gtk3" "lxdm-gtk3")"
+      echo " 1) $(menu_item "gdm" "GDM")"
+      echo " 2) $(menu_item "lightdm" "LightDM")"
+      echo " 3) $(menu_item "sddm" "SDDM")"
+      echo " 4) $(menu_item "slim" "Slim")"
       echo ""
       echo " b) BACK|SKIP"
       echo ""
@@ -793,14 +724,10 @@ install_desktop_environment(){
       for OPT in ${OPTIONS[@]}; do
         case "$OPT" in
           1)
-            aur_package_install "entrance-git"
-            system_ctl enable entrance
-            ;;
-          2)
             package_install "gdm"
             system_ctl enable gdm
             ;;
-          3)
+          2)
             if [[ ${KDE} -eq 1 ]]; then
               package_install "lightdm lightdm-kde-greeter"
             else
@@ -808,7 +735,7 @@ install_desktop_environment(){
             fi
             system_ctl enable lightdm
             ;;
-          4)
+          3)
             package_install "sddm sddm-kcm"
             system_ctl enable sddm
             sddm --example-config > /etc/sddm.conf
@@ -816,17 +743,9 @@ install_desktop_environment(){
             sed -i 's/CursorTheme=/CursorTheme=breeze_cursors/' /etc/sddm.conf
             sed -i 's/Numlock=none/Numlock=on/' /etc/sddm.conf
             ;;
-          5)
+          4)
             package_install "slim"
             system_ctl enable slim
-            ;;
-          6)
-            package_install "lxdm"
-            system_ctl enable lxdm
-            ;;
-          7)
-            package_install "lxdm-gtk3"
-            system_ctl enable lxdm
             ;;
           "b")
             break
@@ -877,17 +796,10 @@ install_desktop_environment(){
       print_title "$1 ESSENTIAL APPS"
       echo " 1) $(menu_item "entrance-git gdm lightdm sddm" "Display Manager") $AUR"
       echo " 2) $(menu_item "dmenu")"
-      echo " 3) $(menu_item "viewnior")"
-      echo " 4) $(menu_item "gmrun")"
-      echo " 5) $(menu_item "rxvt-unicode")"
-      echo " 6) $(menu_item "squeeze-git") $AUR"
-      echo " 7) $(menu_item "thunar")"
-      echo " 8) $(menu_item "tint2")"
-      echo " 9) $(menu_item "volwheel")"
-      echo "10) $(menu_item "xfburn")"
-      echo "11) $(menu_item "xcompmgr")"
-      echo "12) $(menu_item "zathura")"
-      echo "13) $(menu_item "speedtest-cli")"
+      echo " 3) $(menu_item "rxvt-unicode")"
+      echo " 4) $(menu_item "volwheel")"
+      echo " 5) $(menu_item "xcompmgr")"
+      echo " 6) $(menu_item "speedtest-cli")"
       echo ""
       echo " d) DONE"
       echo ""
@@ -903,36 +815,15 @@ install_desktop_environment(){
             package_install "dmenu"
             ;;
           3)
-            package_install "viewnior"
-            ;;
-          4)
-            package_install "gmrun"
-            ;;
-          5)
             package_install "rxvt-unicode"
             ;;
-          6)
-            aur_package_install "squeeze-git"
-            ;;
-          7)
-            package_install "thunar tumbler"
-            ;;
-          8)
-            package_install "tint2"
-            ;;
-          9)
+          4)
             package_install "volwheel"
             ;;
-          10)
-            package_install "xfburn"
-            ;;
-          11)
+          5)
             package_install "xcompmgr transset-df"
             ;;
-          12)
-            package_install "zathura"
-            ;;
-          13)
+          6)
             package_install "speedtest-cli"
             ;;
           "d")
@@ -954,13 +845,8 @@ install_desktop_environment(){
   echo " --- DE ---         --- WM ---"
   echo " 1) Cinnamon        10) Awesome"
   echo " 2) Deepin          11) Fluxbox"
-  echo " 3) Enlightenment   12) i3"
-  echo " 4) GNOME           13) OpenBox"
-  echo " 5) KDE             14) Xmonad"
-  echo " 6) LXQT"
-  echo " 7) Mate"
-  echo " 8) XFCE"
-  echo " 9) Budgie"
+  echo " 3) GNOME           12) i3"
+  echo " 4) KDE             13) OpenBox"
   echo ""
   echo " b) BACK"
   read_input $DESKTOPENV
@@ -996,20 +882,6 @@ install_desktop_environment(){
       ;;
       #}}}
     3)
-      #ENLIGHTENMENT {{{
-      print_title "ENLIGHTENMENT - http://wiki.archlinux.org/index.php/Enlightenment"
-      print_info "Enlightenment, also known simply as E, is a stacking window manager for the X Window System which can be used alone or in conjunction with a desktop environment such as GNOME or KDE. Enlightenment is often used as a substitute for a full desktop environment."
-      package_install "enlightenment terminology"
-      package_install "leafpad epdfview"
-      package_install "lxappearance"
-      # config xinitrc
-      config_xinitrc "enlightenment_start"
-      pause_function
-      install_misc_apps "Enlightenment"
-      install_themes "Enlightenment"
-      ;;
-      #}}}
-    4)
       #GNOME {{{
       print_title "GNOME - https://wiki.archlinux.org/index.php/GNOME"
       print_info "GNOME is a desktop environment and graphical user interface that runs on top of a computer operating system. It is composed entirely of free and open source software. It is an international project that includes creating software development frameworks, selecting application software for the desktop, and working on the programs that manage application launching, file handling, and window and task management."
@@ -1027,7 +899,7 @@ install_desktop_environment(){
       system_ctl enable gdm
       ;;
       #}}}
-    5)
+    4)
       #KDE {{{
       print_title "KDE - https://wiki.archlinux.org/index.php/KDE"
       print_info "KDE is an international free software community producing an integrated set of cross-platform applications designed to run on Linux, FreeBSD, Microsoft Windows, Solaris and Mac OS X systems. It is known for its Plasma Desktop, a desktop environment provided as the default working environment on many Linux distributions."
@@ -1038,116 +910,12 @@ install_desktop_environment(){
       # config xinitrc
       config_xinitrc "startkde"
       pause_function
-      #KDE CUSTOMIZATION {{{
-      while true
-      do
-        print_title "KDE CUSTOMIZATION"
-        echo " 1) $(menu_item "choqok")"
-        echo " 2) $(menu_item "digikam")"
-        echo " 3) $(menu_item "k3b")"
-        echo " 4) $(menu_item "skrooge")"
-        echo " 5) $(menu_item "yakuake")"
-        echo ""
-        echo " d) DONE"
-        echo ""
-        KDE_OPTIONS+=" d"
-        read_input_options "$KDE_OPTIONS"
-        for OPT in ${OPTIONS[@]}; do
-          case "$OPT" in
-            1)
-              package_install "choqok"
-              ;;
-            2)
-              package_install "digikam"
-              ;;
-            3)
-              package_install "k3b cdrdao dvd+rw-tools"
-              ;;
-            4)
-              package_install "skrooge"
-              ;;
-            5)
-              package_install "yakuake"
-              ;;
-            "d")
-              break
-              ;;
-            *)
-              invalid_option
-              ;;
-          esac
-        done
-        source sharedfuncs_elihw
-      done
-      #}}}
       system_ctl enable sddm
       sddm --example-config > /etc/sddm.conf
       sed -i 's/Current=/Current=breeze/' /etc/sddm.conf
       sed -i 's/CursorTheme=/CursorTheme=breeze_cursors/' /etc/sddm.conf
       sed -i 's/Numlock=none/Numlock=on/' /etc/sddm.conf
       KDE=1
-      ;;
-      #}}}
-    6)
-      #LXQT {{{
-      print_title "LXQT - http://wiki.archlinux.org/index.php/lxqt"
-      print_info "LXQt is the Qt port and the upcoming version of LXDE, the Lightweight Desktop Environment. It is the product of the merge between the LXDE-Qt and the Razor-qt projects: A lightweight, modular, blazing-fast and user-friendly desktop environment."
-      package_install "lxqt openbox breeze-icons"
-      package_install "leafpad epdfview"
-      mkdir -p /home/${username}/.config/lxqt
-      cp /etc/xdg/lxqt/* /home/${username}/.config/lxqt
-      mkdir -p /home/${username}/.config/openbox/
-      cp /etc/xdg/openbox/{menu.xml,rc.xml,autostart} /home/${username}/.config/openbox/
-      chown -R ${username}:users /home/${username}/.config
-      # config xinitrc
-      config_xinitrc "startlxqt"
-      pause_function
-      install_misc_apps "LXQT"
-      install_themes "LXQT"
-      KDE=1
-      ;;
-      #}}}
-    7)
-      #MATE {{{
-      print_title "MATE - https://wiki.archlinux.org/index.php/Mate"
-      print_info "The MATE Desktop Environment is a fork of GNOME 2 that aims to provide an attractive and intuitive desktop to Linux users using traditional metaphors."
-      package_install "mate mate-extra"
-      # config xinitrc
-      config_xinitrc "mate-session"
-      pause_function
-      install_display_manager
-      install_themes "MATE"
-      ;;
-      #}}}
-    8)
-      #XFCE {{{
-      print_title "XFCE - https://wiki.archlinux.org/index.php/Xfce"
-      print_info "Xfce is a free software desktop environment for Unix and Unix-like platforms, such as Linux, Solaris, and BSD. It aims to be fast and lightweight, while still being visually appealing and easy to use."
-      package_install "xfce4 xfce4-goodies xarchiver mupdf"
-      # config xinitrc
-      config_xinitrc "startxfce4"
-      pause_function
-      install_display_manager
-      install_themes "XFCE"
-      ;;
-      #}}}
-    9)
-      #BUDGIE {{{
-      print_title "BUDGIE - https://wiki.archlinux.org/index.php/Budgie_Desktop"
-      print_info "Budgie is the default desktop of Solus Operating System, written from scratch. Besides a more modern design, Budgie can emulate the look and feel of the GNOME 2 desktop."
-      package_install "gnome gnome-extra gnome-software gnome-initial-setup telepathy"
-      package_install "deja-dup gedit-plugins gpaste gnome-tweak-tool gnome-power-manager"
-      package_install "budgie-desktop"
-      package_install "nautilus-share"
-      # remove gnome games
-      package_remove "aisleriot atomix four-in-a-row five-or-more gnome-2048 gnome-chess gnome-klotski gnome-mahjongg gnome-mines gnome-nibbles gnome-robots gnome-sudoku gnome-tetravex gnome-taquin swell-foop hitori iagno quadrapassel lightsoff"
-      # config xinitrc
-      config_xinitrc "export XDG_CURRENT_DESKTOP=Budgie:GNOME \n budgie-desktop"
-      GNOME=1
-      pause_function
-      install_themes "GNOME"
-      #Gnome Display Manager (a reimplementation of xdm)
-      system_ctl enable gdm
       ;;
       #}}}
     10)
@@ -1213,18 +981,6 @@ install_desktop_environment(){
       install_themes "OPENBOX"
       ;;
       #}}}
-    14)
-      #XMONAD {{{
-      print_title "XMONAD - http://wiki.archlinux.org/index.php/Xmonad"
-      print_info "xmonad is a tiling window manager for X. Windows are arranged automatically to tile the screen without gaps or overlap, maximizing screen use. Window manager features are accessible from the keyboard: a mouse is optional."
-      package_install "xmonad xmonad-contrib"
-      # config xinitrc
-      config_xinitrc "xmonad"
-      pause_function
-      install_misc_apps "XMONAD"
-      install_themes "XMONAD"
-      ;;
-      #}}}
     "b")
       break
       ;;
@@ -1259,6 +1015,7 @@ install_desktop_environment(){
   #}}}
 }
 #}}}
+
 #CONNMAN/NETWORKMANAGER/WICD {{{
 install_nm_wicd(){
   print_title "NETWORK MANAGER"
@@ -1307,6 +1064,7 @@ install_nm_wicd(){
   esac
 }
 #}}}
+
 #USB 3G MODEM {{{
 install_usb_modem(){
   print_title "USB 3G MODEM - https://wiki.archlinux.org/index.php/USB_3G_Modem"
@@ -1325,6 +1083,7 @@ install_usb_modem(){
   fi
 }
 #}}}
+
 #BLUETOOTH {{{
 install_bluetooth(){
   print_title "BLUETOOTH - https://wiki.archlinux.org/index.php/Bluetooth"
@@ -1337,21 +1096,17 @@ install_bluetooth(){
   fi
 }
 #}}}
+
 #ACCESSORIES {{{
 install_accessories_apps(){
   while true
   do
     print_title "ACCESSORIES APPS"
-    echo " 1) $(menu_item "albert")"
-    echo " 2) $(menu_item "catfish")"
-    echo " 3) $(menu_item "conky-lua") $AUR"
-    echo " 4) $(menu_item "enpass-bin") $AUR"
-    echo " 5) $(menu_item "keepass")"
-    echo " 6) $(menu_item "pamac-aur" "Pamac") $AUR"
-    echo " 7) $(menu_item "shutter hotshots" "$([[ ${KDE} -eq 1 ]] && echo "Hotshots" || echo "Shutter";)")"
-    echo " 8) $(menu_item "synapse")"
-    echo " 9) $(menu_item "terminator")"
-    echo "10) $(menu_item "tilix-bin") $AUR"
+    echo " 1) $(menu_item "conky-lua") $AUR"
+    echo " 2) $(menu_item "keepass")"
+    echo " 3) $(menu_item "pamac-aur" "Pamac") $AUR"
+    echo " 4) $(menu_item "shutter hotshots" "$([[ ${KDE} -eq 1 ]] && echo "Hotshots" || echo "Shutter";)")"
+    echo " 5) $(menu_item "terminator")"
     echo ""
     echo " b) BACK"
     echo ""
@@ -1360,40 +1115,25 @@ install_accessories_apps(){
     for OPT in ${OPTIONS[@]}; do
       case "$OPT" in
         1)
-          package_install "albert"
-          ;;
-        2)
-          package_install "catfish"
-          ;;
-        3)
           aur_package_install "conky-lua"
           package_install "lm_sensors"
           sensors-detect --auto
           ;;
-        4)
-          aur_package_install "enpass-bin"
-          ;;
-        5)
+        2)
           package_install "keepass"
           ;;
-        6)
+        3)
           aur_package_install "pamac-aur"
           ;;
-        7)
+        4)
           if [[ ${KDE} -eq 1 ]]; then
             aur_package_install "hotshots"
           else
             aur_package_install "shutter"
           fi
           ;;
-        8)
-          package_install "synapse"
-          ;;
-        9)
+        5)
           package_install "terminator"
-          ;;
-        10)
-          aur_package_install "tilix-bin"
           ;;
         "b")
           break
@@ -1407,6 +1147,7 @@ install_accessories_apps(){
   done
 }
 #}}}
+
 #DEVELOPEMENT {{{
 install_development_apps(){
   while true
