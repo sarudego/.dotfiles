@@ -117,7 +117,9 @@ if [ "$TMUX" = "" ]; then tmux; fi
 [ -f $HOME/.aliases ] && source $HOME/.aliases
 
 # Load Nerd Fonts with Powerlevel9k theme for Zsh
-source $HOME/powerlevel10k/powerlevel10k.zsh-theme  # this line is must for powerlevel9k
+# source $HOME/powerlevel10k/powerlevel10k.zsh-theme  # this line is must for powerlevel9k
+source /usr/share/zsh-theme-powerlevel9k/powerlevel9k.zsh-theme
+#source ~/powerlevel10k/powerlevel10k.zsh-theme
 source $HOME/.powerlevel9k
 
 

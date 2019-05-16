@@ -14,31 +14,31 @@ fi
 
 if [ -f "$HOME/.vimrc" ]
 then
-    cp $HOME/.vimrc $PATH_BACKUP/.vimrc
+    mv $HOME/.vimrc $PATH_BACKUP/.vimrc
     echo "~/.vimrc copied."
 fi
 
 if [ -f "$HOME/.config/nvim/init.vim" ]
 then
-  cp --parents $HOME/.config/nvim/init.vim $PATH_BACKUP
+   mv --parents $HOME/.config/nvim/init.vim $PATH_BACKUP
    echo "~/.config/nvim/init.vim copied."
 fi
 
 if [ -f "$HOME/.zshrc"  ]
 then
-   cp $HOME/.zshrc $PATH_BACKUP/.zshrc
+   mv $HOME/.zshrc $PATH_BACKUP/.zshrc
    echo "~/.zshrc copied."
 fi
 
 if [ -f $HOME/.aliases ]
 then
-   cp $HOME/.aliases $PATH_BACKUP/.aliases
+   mv $HOME/.aliases $PATH_BACKUP/.aliases
    echo "~/.aliases copied."
 fi
 
 if [ -e "$HOME/.tmux.conf" ]
 then
-   cp $HOME/.tmux.conf $PATH_BACKUP/.tmux.conf
+   mv $HOME/.tmux.conf $PATH_BACKUP/.tmux.conf
    echo "~/.tmux.conf copied."
 fi
 
