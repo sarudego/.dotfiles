@@ -191,8 +191,8 @@ def modify_config_sshd(new_user):
 
     sed('#HostKey /etc/ssh/ssh_host_dsa_key', 'HostKey /etc/ssh/ssh_host_dsa_key', '/etc/ssh/sshd_config')
     # sed -i '/HostKey \/etc\/ssh\/ssh_host_rsa_key/s/^#//' /etc/ssh/sshd_config
-    sed('#HostKey /etc/ssh/ssh_host_rsa_key', '^#', '/etc/ssh/sshd_config')
-    # sed('#HostKey /etc/ssh/ssh_host_rsa_key', 'HostKey /etc/ssh/ssh_host_rsa_key', '/etc/ssh/sshd_config')
+    # sed('#HostKey /etc/ssh/ssh_host_rsa_key', '^#', '/etc/ssh/sshd_config')
+    sed('#HostKey /etc/ssh/ssh_host_rsa_key', 'HostKey /etc/ssh/ssh_host_rsa_key', '/etc/ssh/sshd_config')
     #sed('#HostKey /etc/ssh/ssh_host_rsa_key', 'RSAAuthentication yes', '/etc/ssh/sshd_config')
     #sed('#HostKey /etc/ssh/ssh_host_rsa_key', 'PubkeyAuthentication yes', '/etc/ssh/sshd_config')
 
