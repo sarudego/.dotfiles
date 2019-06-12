@@ -7,7 +7,7 @@
 - clean: ['~']
 
 - shell:
-    - [sh pre-install.sh, Running pre installation script]
+    #- [sh pre-install.sh, Running pre installation script]
     - [git submodule update --init --recursive, Installing submodules]
     - [pip3 install --user pynvim, Install pynvim]
     - [pip3 install neovim, Install neovim with python3 support]

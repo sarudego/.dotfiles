@@ -1,88 +1,90 @@
-## load zgen
-source "${HOME}/.zgen/zgen.zsh"
+#export LC_CTYPE="en_US.utf8"
+#export LC_COLLATE="C"
+#export LC_MESSAGES="en_US.utf8"
+#export LC_ALL="en_US.utf8"
 
-# if the init script doesn't exist
-if ! zgen saved; then
+# Check if zplug is installed
+#if [[ ! -d ~/.zplug ]]; then
+  #git clone https://github.com/zplug/zplug ~/.zplug
+  #source ~/.zplug/init.zsh && zplug update --self
+#fi
 
-  # specify plugins here
-  zgen oh-my-zsh
-  zgen oh-my-zsh plugins/git
-  #zgen oh-my-zsh plugins/command-not-found
-  #zgen load unixorn/autoupdate-zgen
-  zgen load twang817/zsh-run-help
-  zgen load chrissicool/zsh-256color
-  zgen load djui/alias-tips
-  zgen load Cloudstek/zsh-plugin-appup  # util for docker-compose.yml file
-  #zgen load mafredri/zsh-async
-  #zgen load gretzky/auto-color-ls   # ---
-  #zgen load desyncr/auto-ls    # ---
-  #zgen load wting/autojump    # ---
-  #zgen load hlissner/zsh-autopair    # ---
-  zgen load zsh-users/zsh-autosuggestions
-  zgen load Tarrasch/zsh-bd  # jump back a specific folder
-  zgen load zsh-users/zsh-completions
-  #zgen load zsh-users/zsh-history-substring-search
-  zgen load zsh-users/zsh-syntax-highlighting
+# Essential
+source ~/.zplug/init.zsh
 
-  ## Git
-  #zgen load elstgav/branch-manager  # needs oh_my_zsh
+## Manage Zplug with zplug
+zplug 'zplug/zplug', hook-build:'zplug --self-manage'
 
-  ## Python
-  zgen load MichaelAquilina/zsh-autoswitch-virtualenv
+## General
+zplug "mafredri/zsh-async", from:github, defer:0
 
-  ## Docker
+zplug "b4b4r07/enhancd", use:init.sh
+export ENHANCD_DOT_SHOW_FULLPATH=1
 
-  ## Other
-  #zgen load skx/sysadmin-util
-  zgen load supercrabtree/k  # is like ls with git support
+# Bat package, a cat alternative
+zplug 'sharkdp/bat', as:command, from:gh-r, rename-to:bat, use:"*x86_64-*-linux*"
 
-  # generate the init script from plugins above
-  zgen save
+# Intuitive and fast "find" replacement
+zplug 'sharkdp/fd', as:command, from:gh-r
 
-  # remove init script each time add/remove plugin
-  #zgen reset
-fi
+# Install FZF, a fuzzy finder
+# Ctrl+r will use fzf now to search on history among other things.
+zplug "junegunn/fzf-bin", from:gh-r, as:command, rename-to:fzf
+zplug 'junegunn/fzf', use:'shell/key-bindings.zsh'
 
-## Plugins config
-# zsh-autosuggestions
-ZSH_AUTOSUGGEST_USE_ASYNC=true
+# Use "lsd" as default ls command
+zplug "Peltoche/lsd", from:gh-r, as:command
+
+# Automatically ls upon entering a dir.
+zplug "desyncr/auto-ls", from:github
+alias ls="lsd -lh"
+alias tree="lsd --tree"
+AUTO_LS_NEWLINE=false
+AUTO_LS_COMMANDS=(ls)
+
+# Alias tip
+zplug "djui/alias-tips"
+export ZSH_PLUGINS_ALIAS_TIPS_TEXT=' alias hint: '
+
+#zplug "jocelynmallon/zshmarks"
+
+# zsh improves
+zplug "zsh-users/zsh-completions",              defer:0
+zplug "zsh-users/zsh-autosuggestions",          defer:2, on:"zsh-users/zsh-completions"
+zplug "zsh-users/zsh-syntax-highlighting",      defer:3, on:"zsh-users/zsh-autosuggestions"
+zplug "zsh-users/zsh-history-substring-search", defer:3, on:"zsh-users/zsh-syntax-highlighting"
+
+zplug "plugins/git", from:oh-my-zsh
+
+# Enhanced dir list with git features
+zplug "supercrabtree/k"
+
+# Setup theme, powerlevel10k wich is quite faster than 9k
+zplug 'romkatv/powerlevel10k', use:powerlevel10k.zsh-theme
 
 
-## Lines configured by zsh-newuser-install
-## History
-HISTFILE=$HOME/.zsh_history
-HISTSIZE=10000
-SAVEHIST=10000
+## Setup neovim
+#zplug "XayOn/c64b066d69734f6d0f5cbf2236d21bd5", from:gist, hook-build: "pip install --user yapf docformatter; nvim +PlugInstall +UpdateRemotePlugins +qa; tmux new vim +Tmuxline +TmuxlineSnapshot\ ~/.tmux.pt.conf +qa"
 
-# remove duplicate lines manually with:
-# awk -i inplace '!x[$0]++' ~/.zsh_history
+## Python
+# Install POETRY, python management tool
+zplug "sdispater/poetry", from:github, as:command, hook-build:"python get-poetry.py"
 
-# Search on history
-[[ -n "${key[PageUp]}"   ]]  && bindkey  "${key[PageUp]}"    history-beginning-search-backward
-[[ -n "${key[PageDown]}" ]]  && bindkey  "${key[PageDown]}"  history-beginning-search-forward
+# Zsh plugin for poetry. Fixes some issues and auto-loads poetry envs
+zplug 'darvid/zsh-poetry', from:github
 
-## setopt options
-CASE_SENSITIVE="false"
-HIST_STAMPS="dd.mm.yyyy"
-HIST_IGNORE_SPACE="true"
-setopt HIST_IGNORE_DUPS
-setopt APPEND_HISTORY           # append
-setopt HIST_IGNORE_ALL_DUPS     # no duplicate
-setopt HIST_SAVE_NO_DUPS        # older commands that duplicate newer ones are omitted
-setopt HIST_IGNORE_SPACE        # ignore space prefixed commands
-setopt HIST_REDUCE_BLANKS       # trim blanks
-setopt HIST_VERIFY              # show before executing history commands
-setopt APPEND_HISTORY           # adds history
-setopt INC_APPEND_HISTORY       # add commands as they are typed, don't wait until shell exit
-setopt SHARE_HISTORY            # share hist between sessions
-setopt HIST_EXPIRE_DUPS_FIRST   # delete duplicates first when HISTFILE size exceeds HISTSIZE
+## Node
+# Install node version manager and nodejs
+zplug 'lukechilds/zsh-nvm'
 
-setopt BANG_HIST                # !keyword
-setopt CORRECT                  # try correct bad commands
 
-#setopt autocd autopushd pushdsilent pushdminus pushdignoredups
-setopt COMPLETE_ALIASES
-setopt notify
+# Install plugins if there are plugins that have not been installed
+zplug check || zplug install
+
+# Then, source plugins and add commands to \$PATH
+zplug load
+
+[ -f $HOME/.zsh_hist_config] && source $HOME/.zsh_hist_config
 
 ## bindkeys config
 bindkey -e
@@ -92,38 +94,13 @@ bindkey "^[[1;5D" emacs-backward-word
 #bindkey -v  # vi mode, not necessary if oh-my-zsh is allowed
 bindkey '^R' history-incremental-search-backward
 
-#bindkey "^[[A" up-line-or-beginning-search # Up
-#bindkey "^[[B" down-line-or-beginning-search # Down
-
-## give us access to ^Q
-#stty -ixon
-
-## The following lines were added by compinstall
-#zstyle :compinstall filename '$HOME/.zshrc'
-#zstyle ':completion:*' menu select  # autocomplete with arrows
-#zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}'
-
-#fpath+=~/.zfunc
-
-autoload -Uz compinit && compinit  # smart auto completion
-#autoload -Uz promptinit && promptinit
-
-## Command not found hook
-if [[ -s '/etc/zsh_command_not_found' ]]; then
-  source '/etc/zsh_command_not_found'
-fi
-
-## Personal
+## Other stuff
 if [ "$TMUX" = "" ]; then tmux; fi
-
 [ -f $HOME/.aliases ] && source $HOME/.aliases
 
-# Load Nerd Fonts with Powerlevel9k theme for Zsh
-#source $HOME/powerlevel10k/powerlevel10k.zsh-theme  # this line is must for powerlevel9k
-source ~/powerlevel10k/powerlevel10k.zsh-theme
-#source /usr/share/zsh-theme-powerlevel9k/powerlevel9k.zsh-theme
-source $HOME/.powerlevel9k
+## Theme
+source ~/.zsh_theme
 
 
-
+source /usr/share/nvm/init-nvm.sh
 
