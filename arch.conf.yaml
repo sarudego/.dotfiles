@@ -16,6 +16,8 @@
 - pacaur:
     - awesome-terminal-fonts
     - pkgfile
+    - python-pip
+    - python3-pip
     - terminator
 
 - link:
@@ -38,3 +40,4 @@
     - [source ~/.zshrc, Source zshrc config]
     - [source ~/.tmux.conf, Source tmux config]
     - [source ~/.config/nvim/init.vim, Source neovim config]
+    - [pip install --user black, Black module for nvim]
