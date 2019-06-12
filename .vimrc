@@ -204,10 +204,10 @@ call plug#begin('~/.vim/plugged')
 
 
 
-source ~/.vim/plug-general.vim
-" source ~/.vim/plug-web.vim
-source ~/.vim/plug-python.vim
-source ~/.vim/plug-other.vim
+source ~/.vim/plug_general.vim
+" source ~/.vim/plug_web.vim
+source ~/.vim/plug_python.vim
+source ~/.vim/plug_other.vim
 
 
 

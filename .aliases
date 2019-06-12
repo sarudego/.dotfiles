@@ -1,3 +1,40 @@
+## Archlinux
+alias pacins='sudo pacman -S'
+alias pacinsno='sudo pacman -S --noconfirm'
 
-
+## system
 alias docker_clean_images='sudo docker rmi $(sudo docker images -a --filter=dangling=true -q)'
+alias dfh='df -h'
+alias fdl='sudo fdisk -l'
+
+## pentesting
+alias nmapscan='sudo nmap -sP 192.168.1.1/24'
+
+
+## python
+alias cleanpy='rm -rf $(find . -name __pycache__)'
+
+
+# Findfile and find content
+function f() { find . -iname "*$1*" ${@:2} }
+function r() { grep "$1" ${@:2} -R . }
+
+
+## utils
+alias v='vim'
+alias cat='bat --paging=never'
+alias zc='nvim ~/.zshrc'
+alias vc='nvim ~/.config/nvim/init.vim'
+# Alias use in oh-my-zsh
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+alias ......='cd ../../../../..'
+alias lsa='ls -a'
+alias ll='ls -l'
+
+
+
+
+

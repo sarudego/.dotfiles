@@ -7,6 +7,7 @@ if ! zgen saved; then
   # specify plugins here
   zgen oh-my-zsh
   zgen oh-my-zsh plugins/git
+  zgen load denysdovhan/spaceship-prompt spaceship
   #zgen oh-my-zsh plugins/command-not-found
   #zgen load unixorn/autoupdate-zgen
   zgen load twang817/zsh-run-help
@@ -14,10 +15,6 @@ if ! zgen saved; then
   zgen load djui/alias-tips
   zgen load Cloudstek/zsh-plugin-appup  # util for docker-compose.yml file
   #zgen load mafredri/zsh-async
-  #zgen load gretzky/auto-color-ls   # ---
-  #zgen load desyncr/auto-ls    # ---
-  #zgen load wting/autojump    # ---
-  #zgen load hlissner/zsh-autopair    # ---
   zgen load zsh-users/zsh-autosuggestions
   zgen load Tarrasch/zsh-bd  # jump back a specific folder
   zgen load zsh-users/zsh-completions
@@ -26,11 +23,6 @@ if ! zgen saved; then
 
   ## Git
   #zgen load elstgav/branch-manager  # needs oh_my_zsh
-
-  ## Python
-  zgen load MichaelAquilina/zsh-autoswitch-virtualenv
-
-  ## Docker
 
   ## Other
   #zgen load skx/sysadmin-util
@@ -46,7 +38,6 @@ fi
 ## Plugins config
 # zsh-autosuggestions
 ZSH_AUTOSUGGEST_USE_ASYNC=true
-
 
 ## Lines configured by zsh-newuser-install
 ## History
@@ -76,11 +67,8 @@ setopt APPEND_HISTORY           # adds history
 setopt INC_APPEND_HISTORY       # add commands as they are typed, don't wait until shell exit
 setopt SHARE_HISTORY            # share hist between sessions
 setopt HIST_EXPIRE_DUPS_FIRST   # delete duplicates first when HISTFILE size exceeds HISTSIZE
-
 setopt BANG_HIST                # !keyword
 setopt CORRECT                  # try correct bad commands
-
-#setopt autocd autopushd pushdsilent pushdminus pushdignoredups
 setopt COMPLETE_ALIASES
 setopt notify
 
@@ -89,41 +77,19 @@ bindkey -e
 bindkey '^[[3~' delete-char
 bindkey "^[[1;5C" emacs-forward-word
 bindkey "^[[1;5D" emacs-backward-word
-#bindkey -v  # vi mode, not necessary if oh-my-zsh is allowed
 bindkey '^R' history-incremental-search-backward
-
-#bindkey "^[[A" up-line-or-beginning-search # Up
-#bindkey "^[[B" down-line-or-beginning-search # Down
-
-## give us access to ^Q
-#stty -ixon
-
-## The following lines were added by compinstall
-#zstyle :compinstall filename '$HOME/.zshrc'
-#zstyle ':completion:*' menu select  # autocomplete with arrows
-#zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}'
-
-#fpath+=~/.zfunc
 
 autoload -Uz compinit && compinit  # smart auto completion
 #autoload -Uz promptinit && promptinit
 
 ## Command not found hook
-if [[ -s '/etc/zsh_command_not_found' ]]; then
-  source '/etc/zsh_command_not_found'
-fi
+#if [[ -s '/etc/zsh_command_not_found' ]]; then
+  #source '/etc/zsh_command_not_found'
+#fi
 
 ## Personal
 if [ "$TMUX" = "" ]; then tmux; fi
 
 [ -f $HOME/.aliases ] && source $HOME/.aliases
-
-# Load Nerd Fonts with Powerlevel9k theme for Zsh
-#source $HOME/powerlevel10k/powerlevel10k.zsh-theme  # this line is must for powerlevel9k
-source ~/powerlevel10k/powerlevel10k.zsh-theme
-#source /usr/share/zsh-theme-powerlevel9k/powerlevel9k.zsh-theme
-source $HOME/.powerlevel9k
-
-
 
 
