@@ -26,28 +26,26 @@
       path: .zshrc
     ~/.zsh.theme:
       relink: true
-      path: .zshrc    
+      path: .zshrc
     ~/.zsh_hist_config:
       relink: true
       path: .zshrc
     ~/.zshenv:
       relink: true
-      path: .zshrc      
+      path: .zshrc
     ~/.aliases: .aliases
     ~/.tmux.conf:
       relink: true
       path: .tmux.conf
     ~/.tmux.theme: .tmux.theme
-    ~/.config/nvim/init.vim: 
+    ~/.config/nvim/init.vim:
       relink: true
       path: .config/nvim/init.vim
-    ~/.config/nvim/config: 
+    ~/.config/nvim/config:
       relink: true
       path: .config/nvim/config
-    ~/.config/redsfhit.conf: redshift.conf
+    ~/.config/redsfhit.conf: .config/redshift.conf
 
 - shell:
-    - [source ~/.zshrc, Source zshrc config]
-    - [source ~/.tmux.conf, Source tmux config]
-    - [source ~/.config/nvim/init.vim, Source neovim config]
+    - [chsh -s $(which zsh), Change shell to zsh]
     - [pip install --user black, Black module for nvim]
