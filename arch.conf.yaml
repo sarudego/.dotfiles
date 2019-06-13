@@ -1,16 +1,16 @@
 
 - defaults:
     link:
-        create: true
-        relink: true
+      create: true
+      relink: true
 
 - clean: ['~']
 
 - shell:
     #- [sh pre-install.sh, Running pre installation script]
     - [git submodule update --init --recursive, Installing submodules]
-    - [pip3 install --user pynvim, Install pynvim]
-    - [pip3 install neovim, Install neovim with python3 support]
+    #- [pip3 install --user pynvim, Install pynvim]
+    #- [pip3 install neovim, Install neovim with python3 support]
     #- [sudo localedef -f UTF-8 -i en_US en_US.UTF-8, Stablishing locales]
 
 - pacaur:
@@ -24,16 +24,26 @@
     ~/.zshrc:
       relink: true
       path: .zshrc
+    ~/.zsh.theme:
+      relink: true
+      path: .zshrc    
+    ~/.zsh_hist_config:
+      relink: true
+      path: .zshrc
+    ~/.zshenv:
+      relink: true
+      path: .zshrc      
     ~/.aliases: .aliases
     ~/.tmux.conf:
       relink: true
       path: .tmux.conf
     ~/.tmux.theme: .tmux.theme
-    ~/.config/nvim/init.vim: vim/nvim/init.vim
-    ~/.config/nvim/mappings.vim: vim/nvim/mappings.vim
-    ~/.config/nvim/plugins.vim: vim/nvim/plugins.vim
+    ~/.config/nvim/init.vim: 
       relink: true
-      path: .vimrc
+      path: .config/nvim/init.vim
+    ~/.config/nvim/config: 
+      relink: true
+      path: .config/nvim/config
     ~/.config/redsfhit.conf: redshift.conf
 
 - shell:

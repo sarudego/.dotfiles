@@ -99,7 +99,7 @@ if [ "$TMUX" = "" ]; then tmux; fi
 [ -f $HOME/.aliases ] && source $HOME/.aliases
 
 ## Theme
-source ~/.zsh_theme
+source ~/.zsh.theme
 
 
 source /usr/share/nvm/init-nvm.sh

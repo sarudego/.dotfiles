@@ -1,113 +1,185 @@
+" ---------------------------------------------------------------------------
+" | General                                                                 |
+" ---------------------------------------------------------------------------
+
+
+if has("autocmd")
+    filetype plugin indent on
+endif
+
+"set autoindent                 " Copy indent to the new line.
+"set autoread                   " Autoread on external changes
+"set autowrite                  " Autowrite changes on current file
+
+"set backspace=indent           " ┐
+"set backspace+=eol             " │ Allow `backspace`
+"set backspace+=start           " ┘ in insert mode.
+
+"set cpoptions+=$               " When making a change, don't
+                               " redisplay the line, and instead,
+                               " put a `$` sign at the end of
+                               " the changed text.
+
+
+"set colorcolumn=80             " Highlight certain column(s).
+"set cursorline                 " Highlight the current line.
+"set encoding=utf-8 nobomb      " Use UTF-8 without BOM.
+
+"set foldmethod=syntax
+"set nofoldenable
+
+"set laststatus=2               " Always show the status line.
+
+"set lazyredraw                 " Do not redraw the screen while
+                               " executing macros, registers
+                               " and other commands that have
+                               " not been typed.
+
+"set linebreak                  " ┐
+set showbreak=>\ \ \          " │
+"set showbreak=↪                " │ Enable linebreak on 500 characters
+"set tw=80                      " │ and wrap it.
+"set wrapmargin=2               " ┘
+
+"set list                       " See differences between tabs and spaces
+"set listchars=tab:▸\           " ┐
+"set listchars+=trail:·         " │ Use custom symbols to
+"set listchars+=eol:↴         " │ represent invisible characters.
+"set listchars+=nbsp:_          " │
+"set listchars+=extends:#       " ┘
+
+"set magic                      " Enable extended regexp.
+"set mat=2                      " Blink matching brackets
+set mouse=a
+"set mousehide                  " Hide mouse pointer while typing.
+
+"set nobackup                   " ┐
+"set nowb                       " │ Turn backup off
+"set noswapfile                 " ┘
+
+"set noerrorbells               " Disable error bells.
+
+"set nojoinspaces               " When using the join command,
+                               " only insert a single space
+                               " after a `.`, `?`, or `!`.
+
+"set nostartofline              " Kept the cursor on the same column.
+
+"set number relativenumber      " ┐
+"set nonumber norelativenumber  " │ Turn hybrid line numbers off
+"set number! relativenumber!    " ┘ toggle hybrid line numbers
+
+"set report=0                   " Report the number of lines changed.
+"set ruler                      " Show cursor position.
+
+"set shiftround                 " Multiple shiftwidth indenting with '<' and '>'
+
+"set showcmd                    " Show the command being typed.
+"set showmatch                  " Set show matching parenthesis
+"set showmode                   " Show current mode.
+
+"set spelllang=en_us            " Set the spellchecking language.
+
+"set smartcase                  " Override `ignorecase` option
+                               " if the search pattern contains
+                               " uppercase characters.
+
+"set smartindent                " Enable smartindent when starting new line
+
+"syntax on
+set syntax=auto
+
+"set title                      " change the terminal's title.
+
+"set tabstop=2                  " ┐
+"set smarttab                   " │
+"set softtabstop=2              " │ Set global <TAB> settings.
+"set shiftwidth=2               " │
+"set expandtab                  " ┘
+
+"set ttyfast                    " Enable fast terminal connection.
+
+"set wildmenu                   " ┐ Enable enhanced command-line
+"set wildmode=full              " ┘ completion (by hitting <TAB> in
+                               " command mode, Vim will show the
+                               " possible matches just above the
+                               " command line with the first
+                               " match highlighted).
+
+
+" ---------------------------------------------------------------------------
+" | Plugins                                                                 |
+" ---------------------------------------------------------------------------
+" check plugin
+function! BuildYCM(info)
+ " info is a dictionary with 3 fields
+ " - name:   name of the plugin
+ " - status: 'installed', 'updated', or 'unchanged'
+ " - force:  set on PlugInstall! or PlugUpdate!
+  if a:info.status == 'installed' || a:info.force
+    !./install.py
+  endif
+endfunction
+
+" Bootstrap Plug
+let autoload_plug_path = stdpath('data') . '~/.local/share/nvim/plugged'
+if !filereadable(autoload_plug_path)
+  silent execute '!curl -fLo ' . autoload_plug_path . '  --create-dirs
+      \ "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"'
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+unlet autoload_plug_path
+
+" Automatically install missing plugins on startup
+if !empty(filter(copy(g:plugs), '!isdirectory(v:val.dir)'))
+  autocmd VimEnter * PlugInstall | q
+endif
+
+
+
 call plug#begin('~/.config/nvim/plugged')
-" Git tools
-Plug 'tpope/vim-fugitive'
-Plug 'airblade/vim-gitgutter'
-Plug 'Xuyuanp/nerdtree-git-plugin'
 
-" Quake-like terminal
-Plug 'Lenovsky/nuake'
+source $HOME/.config/nvim/config/plugins.vim
+source $HOME/.config/nvim/config/python.vim
 
-" Easy align
-Plug 'junegunn/vim-easy-align'
-
-" Nerdtree
-Plug 'scrooloose/nerdtree'
-
-" Denite easy search
-Plug 'Shougo/denite.nvim'
-
-" Grep
-Plug 'mhinz/vim-grepper'
-
-" Theme
-Plug 'kristijanhusak/vim-hybrid-material'
-
-" Lightline and tmuxline, statusbars
-Plug 'itchyny/lightline.vim'
-Plug 'edkolev/tmuxline.vim'
-
-" Python highlight
-Plug 'numirias/semshi', {'do': ':UpdateRemotePlugins'}
-
-" Debugger
-Plug 'vim-vdebug/vdebug'
-
-" Autoformatting
-Plug 'sbdchd/neoformat'
-
-" Snippets
-Plug 'honza/vim-snippets'
-Plug 'SirVer/ultisnips'
-
-" Deoplete, autocompletion
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-Plug 'deoplete-plugins/deoplete-jedi'
-
-" Devicons and emoji help showing nice icons on your vim setup
-Plug 'ryanoasis/vim-devicons'
-Plug 'junegunn/vim-emoji'
-
-" Startify, a nice startup page
-Plug 'mhinz/vim-startify'
 
 call plug#end()
 
-" Configure lightline
-let g:lightline = {
-      \ 'colorscheme': 'jellybeans',
-      \ 'component': {
-      \   'readonly': '%{&readonly?"":""}',
-      \ },
-      \ 'separator': { 'left': '', 'right': '' },
-      \ 'subseparator': { 'left': '', 'right': '' }
-      \ }
 
-" Theme config
-let g:enable_bold_font = 1
-set laststatus=2
-set bg=dark
-colorscheme hybrid_material
+" ---------------------------------------------------------------------------
+" | Automatic Commands                                                      |
+" ---------------------------------------------------------------------------
 
-" Basic vim configuration
-set mouse=a
-set expandtab
-set number
-set wrap
-set linebreak
-set showbreak=>\ \ \
-let mapleader=","
-set syntax=auto
-syntax on
+source $HOME/.config/nvim/config/autocmd.vim
 
-" Standard python configuration
-autocmd FileType python set ts=4
-highlight ColorColumn ctermbg=gray
-autocmd FileType python set colorcolumn=80
-filetype plugin indent on
+" ---------------------------------------------------------------------------
+" | Color Scheme                                                            |
+" ---------------------------------------------------------------------------
 
-" Fuzzy
-nmap <C-p> :Denite file/rec buffer<CR>
-
-" Enable  Autocompletion on startup
-let g:deoplete#enable_at_startup = 1
-
-" F4 to pull a quake-like console
-nnoremap <F4> :Nuake<CR>
-inoremap <F4> <C-\><C-n>:Nuake<CR>
-tnoremap <F4> <C-\><C-n>:Nuake<CR>
-
-" ctrl-o to open nerdtree
-nnoremap <C-O> :NERDTreeToggle<CR>
-
-" Enable Auto-lint for all files
-augroup fmt
-  autocmd!
-  autocmd BufWritePre * undojoin | Neoformat
-augroup END
-
-" But disable black autoformatter
-" if available, only allow yapf and docformatter
-let g:neoformat_enabled_python = ['yapf', 'docformatter']
+source $HOME/.config/nvim/config/color.vim
 
 
-source ~/.zplug/repos/XayOn/c64b066d69734f6d0f5cbf2236d21bd5/pt.vim
+" ---------------------------------------------------------------------------
+" | Key Mappings                                                            |
+" ---------------------------------------------------------------------------
+
+source $HOME/.config/nvim/config/mappings.vim
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
