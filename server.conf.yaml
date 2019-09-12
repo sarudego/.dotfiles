@@ -10,12 +10,6 @@
 - shell:
     - [sh pre-server.sh, Running pre installation script]
     - [git submodule update --init --recursive, Installing submodules]
-    #- [mkdir -p ~/.oh-my-zsh/custom/, Creating oh-my-zsh custom folders]
-    #- [mkdir -p ~/.oh-my-zsh/custom/plugins, Creating oh-my-zsh custom plugins folders]
-    #- []
-    #- [pip3 install --user pynvim, Install pynvim]
-    #- [pip3 install neovim, Install neovim with python3 support]
-    #- [sudo localedef -f UTF-8 -i en_US en_US.UTF-8, Stablishing locales]
     - [git clone https://github.com/tarjoilija/zgen.git "${HOME}/.zgen", Clone zgen repo]
 
 - pacaur:
@@ -23,41 +17,27 @@
     - zsh-theme-powerlevel9k
     - awesome-terminal-fonts
     - pkgfile
-    #- clipit
     - zsh
     - curl
     - wget
-    #- vim
+    - nvim
     #- python-pip
     #- python-neovim
     - tmux
-    #- rxvt-unicode
-    - git
-    - terminator
-    # - redshift
+    #- git
 
 - link:
-    ~/.vim: .vim
-    ~/.vimrc: .vimrc
     ~/.zshrc:
       relink: true
       path: .zshrc
     ~/.aliases: .aliases
-    #~/.oh-my-zsh: oh-my-zsh/
-    #~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting: .oh-my-zsh/custom/plugins/zsh-syntax-highlighting/
-    #~/.oh-my-zsh/custom/plugins/zsh-autosuggestions: .oh-my-zsh/custom/plugins/zsh-autosuggestions/
-    ~/.tmux.conf:
-      relink: true
-      path: .tmux.conf
-    ~/.tmux.theme: .tmux.theme
     #~/.config/nvim/init.vim: vim/nvim/init.vim
     #~/.config/nvim/mappings.vim: vim/nvim/mappings.vim
     #~/.config/nvim/plugins.vim: vim/nvim/plugins.vim
     #  relink: true
     #  path: .vimrc
-    #~/.config/redsfhit.conf: redshift.conf
 
-#- shell:
-    #- [source ~/.zshrc, Source zshrc config]
-    #- [source ~/.tmux.conf, Source tmux config]
-    #- [source ~/.vimrc, Source vimrc config]
+- shell:
+    - [source ~/.zshrc, Source zshrc config]
+    - [source ~/.tmux.conf, Source tmux config]
+    - [source ~/.vimrc, Source vimrc config]
