@@ -25,7 +25,7 @@ If you want to use the ssh script, install and configure fail2ban and ssh in add
 What things you need to install the software and how to install them.
 
 
-```
+```bash
 ln -s /etc/ca-certificates/extracted/ca-bundle.trust.crt /etc/ssl/certs/ca-certificates.crt
   (just if you get a certificate error when clone this repo)
 pip install enum34
@@ -35,15 +35,26 @@ pip install enum34
 
 Steps for install .dotfiles and configure hardening ssh.
 
-```
+```bash
 ./init.sh
 ```
 
 This step makes a backup of your current .dotfiles, identifies the OS and starts the appropriate script.
 
+
+## Install on Server
+This feature install and configure zsh, nvim, and other things on your server, at the same time
+what install and configure ssh, fail2ban and other packages for securize it.
+
+All you need is use this command inside your server with privileges.
+
+```bash
+curl -sSL https://raw.githubusercontent.com/sarudego/.dotfiles/master/prepare_server.sh | bash
+```
+
 ## Others functionalities
 
-```
+```bash
 ./utils/init_secure.sh
 ```
 
