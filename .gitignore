@@ -1,0 +1,7 @@
+# This files MUST NOT storing in this repo.
+.ssh
+id_rsa*
+*.pub
+.aws
+.bash_history
+.zsh_history

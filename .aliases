@@ -1,0 +1,121 @@
+## Archlinux
+alias pacins='sudo pacman -S'
+alias pacinsno='sudo pacman -S --noconfirm'
+
+## system
+function dck_remake() {
+	docker stop "$1"
+	docker container rm "$1"
+}
+alias dck_rm='docker rm $(docker container ls -aq)'
+alias dck_rmi='docker rmi $(sudo docker images -a --filter=dangling=true -q)'
+function dck_clean_all() {
+	docker rm $(docker container ls -aq)
+	#docker rmi $(docker images -a --filter-dangling=true -q)
+	docker rmi $(docker images ls -aq)
+	docker volume ls -qf dangling=true | xargs -r docker volume rm
+	docker volume rm $(docker volume ls -qf dangling=true)
+	docker volume prune
+}
+
+# ------------------------------------
+# Docker alias and function
+# ------------------------------------
+
+# Get latest container ID
+alias dl="docker ps -l -q"
+
+# Get container process
+alias dps="docker ps"
+
+# Get process included stop container
+alias dpa="docker ps -a"
+
+# Get images
+alias di="docker images"
+
+# Get container IP
+alias dip="docker inspect --format '{{ .NetworkSettings.IPAddress }}'"
+
+# Run deamonized container, e.g., $dkd base /bin/echo hello
+alias dkd="docker run -d -P"
+
+# Run interactive container, e.g., $dki base /bin/bash
+alias dki="docker run -i -t -P"
+
+# Execute interactive container, e.g., $dex base /bin/bash
+alias dex="docker exec -i -t"
+
+# Stop all containers
+dstop() { docker stop $(docker ps -a -q); }
+
+# Remove all containers
+drm() { docker rm $(docker ps -a -q); }
+
+# Stop and Remove all containers
+alias drmf='docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q)'
+
+# Remove all images
+dri() { docker rmi $(docker images -q); }
+
+# Dockerfile build, e.g., $dbu tcnksm/test
+dbu() { docker build -t=$1 .; }
+
+# Show all alias related docker
+dalias() { alias | grep 'docker' | sed "s/^\([^=]*\)=\(.*\)/\1 => \2/"| sed "s/['|\']//g" | sort; }
+
+# Bash into running container
+dbash() { docker exec -it $(docker ps -aqf "name=$1") bash; }
+
+
+
+
+
+alias dfh='df -h'
+alias fdl='sudo fdisk -l'
+
+## pentesting
+alias nmapscan='sudo nmap -sP 192.168.1.1/24'
+
+
+## python
+alias cleanpy='rm -rf $(find . -name __pycache__)'
+
+
+# Findfile and find content
+#function f() { find . -iname "*$1*" ${@:2} }
+function r() { grep "$1" ${@:2} -R . }
+
+
+## utils
+alias v='nvim'
+alias cat='bat --paging=never'
+alias zc='nvim ~/.zshrc'
+alias vc='nvim ~/.config/nvim/init.vim'
+# Alias use in oh-my-zsh
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+alias ......='cd ../../../../..'
+
+# Aliases
+alias cp='cp -rv'
+alias ls='ls --color=auto -ACF'
+alias ll='ls --color=auto -alF'
+alias grep='grep --color=auto'
+alias mkdir='mkdir -pv'
+alias mv='mv -v'
+alias wget='wget -c'
+
+
+
+alias sshvps='ssh dexras@51.38.132.63'
+alias sshjupiterold='ssh dexras@188.65.92.108 -p 23768'
+
+#alias sshpi='ssh bl4ck@192.168.1.182'
+alias sshnuc='ssh bl4ck@192.168.1.189 -p 36157'
+
+alias sshtorrent='ssh user@95.211.171.23 -p 2222'
+
+alias sshsyn='ssh h0meN3S@192.168.1.32 -p 22852'
