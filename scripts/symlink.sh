@@ -31,11 +31,13 @@ function linkDotfile {
   ln -s ${dotfilesDir}/${1} ${dest}
 }
 
-linkDotfile .vimrc
+linkDotfile .config
 linkDotfile .tmux.conf
-linkDotfile .bashrc
-linkDotfile .bash_profile
+linkDotfile .tmux.theme
 linkDotfile .gitconfig
 linkDotfile .gitmessage
-linkDotfile .git-completion.bash
+linkDotfile .aliases
+linkDotfile .zsh.theme
+linkDotfile .zsh_hist_config
+linkDotfile .zshrc
 
