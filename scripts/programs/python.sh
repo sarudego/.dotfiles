@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Python
-sudo pacman -S --noconfirm python3 python3-pip
+sudo pacman -S --noconfirm python3 python-pip
 
 # Pip programs
-pip3 install yapf
+pip install --user yapf
