@@ -36,8 +36,7 @@ export ZSH_PLUGINS_ALIAS_TIPS_TEXT=' alias hint: '
 zplug "Peltoche/lsd", from:gh-r, as:command
 alias ls='lsd'
 alias l='ls -l'
-alias la='ls -a'
-alias lla='ls -la'
+alias la='ls -la'
 alias lt='ls --tree'
 
 # Enhanced dir list with git features
@@ -48,6 +47,13 @@ zplug "zsh-users/zsh-completions",              defer:1
 zplug "zsh-users/zsh-autosuggestions",          defer:2, on:"zsh-users/zsh-completions"
 zplug "zsh-users/zsh-syntax-highlighting",      defer:3, on:"zsh-users/zsh-autosuggestions"
 zplug "zsh-users/zsh-history-substring-search", defer:3, on:"zsh-users/zsh-syntax-highlighting"
+zplug "MichaelAquilina/zsh-auto-notify", 	defer:3 # Auto notify for long tasks
+# Set threshold to 20seconds
+export AUTO_NOTIFY_THRESHOLD=20
+#export AUTO_NOTIFY_TITLE="Hey! %command has just finished"
+#export AUTO_NOTIFY_BODY="It completed in %elapsed seconds with exit code %exit_code"
+
+
 
 # Install FZF, a fuzzy finder
 # Ctrl+r will use fzf now to search on history among other things.
@@ -93,8 +99,8 @@ bindkey '^R' history-incremental-search-backward
 if [ "$TMUX" = "" ]; then tmux; fi
 [ -f $HOME/.aliases ] && source $HOME/.aliases
 
-# Vim for life
 export EDITOR=/usr/bin/vim
+export PATH=$PATH:~/.local/bin
 
 
 
