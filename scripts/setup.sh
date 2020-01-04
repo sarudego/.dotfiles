@@ -1,27 +1,55 @@
 #!/bin/bash
 
+## Import other functions
+
+
+## Helper functions
 function isExec {
-  if [[ -f "$1" && -x $("$1") ]]; then
+    if [[ -f $1 && -x $($1) ]]; then
         true;
-  else
+    else
         echo "Making $1 executable...";
-	chmod +x $1
-  fi;
+        chmod +x $1
+    fi;
 }
 
-isExec symlink.sh
-isExec pacinstall.sh
-isExec programs.sh
-
-./symlink.sh
-./pacinstall.sh
-./programs.sh
-
 # Get all upgrades
-sudo pacman -Syyu
+function updateSystem {
+    dist=$(lsb_release -ds 2>/dev/null || cat /etc/*release 2>/dev/null | head -n1 || uname -om)
+    echo "[x] Your distro is $dist"
+    case "$dist" in 
+        *Arch Linux*)
+            sudo pacman -Syyu --noconfirm
+            ;;
+        *Debian*)
+            sudo apt -y update
+            sudo apt -y upgrade
+            ;;
+    esac
+    echo -e "\n[x] System is updated"
+}
 
-# Source zsh
-source ~/.zshrc
+# Install packages
+function installPackages {
+    isExec symlink.sh
+    isExec install.sh
 
-# Fun hello
+    ./symlink.sh
+    ./install.sh
+}
+
+#isExec programs.sh
+
+
+#./programs.sh
+
+
+
+updateSystem
+installPackages
+
+## Source zsh
+#source ~/.zshrc
+
+## System ready...
 figlet "... we're ready!!"

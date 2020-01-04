@@ -13,21 +13,21 @@ function linkDotfile {
 
   if [ -h ~/${1} ]; then
     # Existing symlink
-    echo "Removing existing symlink: ${dest}"
+    echo "[x] Removing existing symlink: ${dest}"
     rm ${dest}
 
   elif [ -f "${dest}" ]; then
     # Existing file
-    echo "Backing up existing file: ${dest}"
+    echo "[x] Backing up existing file: ${dest}"
     mv ${dest}{,.${dateStr}}
 
   elif [ -d "${dest}" ]; then
     # Existing dir
-    echo "Backing up existing dir: ${dest}"
+    echo "[x] Backing up existing dir: ${dest}"
     mv ${dest}{,.${dateStr}}
   fi
 
-  echo "Creating new symlink: ${dest}"
+  echo "[x] Creating new symlink: ${dest}"
   ln -s ${dotfilesDir}/${1} ${dest}
 }
 

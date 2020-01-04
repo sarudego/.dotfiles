@@ -1,24 +1,24 @@
 #!/bin/bash
 
 function isExec {
-  if [[ -f "$1" && -x $("$1") ]]; then
+  if [[ -f $1 && -x $($1) ]]; then
         true;
   else
-        echo -n "[x] Making $1 executable...";
+        echo "Making $1 executable...";
 	chmod +x $1
   fi;
 }
 
 isExec symlink.sh
-isExec install.sh
+isExec pacinstall.sh
 isExec programs.sh
 
 ./symlink.sh
-./install.sh
+./pacinstall.sh
 ./programs.sh
 
 # Get all upgrades
-sudo apt update
+sudo pacman -Syyu
 
 # Source zsh
 source ~/.zshrc
