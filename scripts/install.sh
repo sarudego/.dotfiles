@@ -55,6 +55,11 @@ function install {
                 #    echo "[x] Already installed: ${package}"
                 #fi
             done
+            
+            # Install awesome-terminal-fonts
+            git clone https://github.com/gabrielelana/awesome-terminal-fonts
+            cp -r ~/awesome-terminal-fonts/build ~/.fonts
+            fc-cache -fv ~/.fonts
             ;;
     esac
     
