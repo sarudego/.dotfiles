@@ -3,4 +3,4 @@
 cd programs/
 
 ./docker.sh
-./python.sh
+#./python.sh
