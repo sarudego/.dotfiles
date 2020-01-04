@@ -3,7 +3,7 @@
 sudo systemctl enable docker.service
 sudo systemctl start docker.service
 
-gpasswd -a $USER docker
+sudo gpasswd -a $USER docker
 
 exec $SHELL
 
