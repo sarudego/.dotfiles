@@ -3,11 +3,11 @@
 # Basics
 packages=(
     exfat-utils
-    firefox
+    firefox-esr
     htop
     gparted
     kate
-    keepass
+    keepass2
     neovim
     ntfs-3g
     spectacle

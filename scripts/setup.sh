@@ -5,7 +5,7 @@
 
 ## Helper functions
 function isExec {
-    if [[ -f $1 && -x $($1) ]]; then
+    if [[ -f $1 && -x $1 ]]; then
         true;
     else
         echo "Making $1 executable...";
@@ -18,7 +18,7 @@ function updateSystem {
     dist=$(lsb_release -ds 2>/dev/null || cat /etc/*release 2>/dev/null | head -n1 || uname -om)
     echo "[x] Your distro is $dist"
     case "$dist" in 
-        *Arch Linux*)
+        *Arch*)
             sudo pacman -Syyu --noconfirm
             ;;
         *Debian*)
@@ -33,15 +33,12 @@ function updateSystem {
 function installPackages {
     isExec symlink.sh
     isExec install.sh
+    #isExec programs.sh
 
     ./symlink.sh
     ./install.sh
+    #./programs.sh
 }
-
-#isExec programs.sh
-
-
-#./programs.sh
 
 
 
@@ -52,4 +49,5 @@ installPackages
 #source ~/.zshrc
 
 ## System ready...
-figlet "... we're ready!!"
+figlet "... we're ready!!" | lolcat
+
