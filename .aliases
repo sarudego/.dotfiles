@@ -108,14 +108,3 @@ alias mkdir='mkdir -pv'
 alias mv='mv -v'
 alias wget='wget -c'
 
-
-
-alias sshvps='ssh dexras@51.38.132.63'
-alias sshjupiterold='ssh dexras@188.65.92.108 -p 23768'
-
-#alias sshpi='ssh bl4ck@192.168.1.182'
-alias sshnuc='ssh bl4ck@192.168.1.189 -p 36157'
-
-alias sshtorrent='ssh user@95.211.171.23 -p 2222'
-
-alias sshsyn='ssh h0meN3S@192.168.1.32 -p 22852'
